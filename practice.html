@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>German Vocabulary - version 1</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<link href="css/styles.css" rel="stylesheet">
+      <script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript">
+	window.onerror = function(errorMsg, url, lineNumber) {
+	  "use strict";
+	  alert(errorMsg + " " + url + " " + lineNumber);
+	  return false;
+	};
+	</script>
+</head>
+<body onload="onLoad();">
+<article id="repeatScreen">
+
+<div id="learnWords2-area">
+  <div id="question">
+      <audio id="audio_play" autoplay>
+     	  <source src="#" type="audio/mpeg">
+     	  Your browser does not support the audio element.
+     	</audio>
+     		<img src="media/symbols/listen.png" id=listen>
+    </div>
+  <div id="optionsForAnswers">
+    <div class=optionRow>
+      <div class="optionCell left"><button type="button" class="optionBtn"></button></div>
+      <div class="optionCell right"><button type="button" class="optionBtn"></button></div>
+    </div>
+    <div class=optionRow>
+      <div class="optionCell left"><button type="button" class=optionBtn></button></div>
+      <div class="optionCell right"><button type="button" class="optionBtn"></button></div>
+    </div>
+  </div>
+</div>
+<div id=message style="display:none;"></div>
+</article>
+
+<script src="js/LW.js"></script>
+<script src="js/LWutils.js"></script>
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/flowtype.js"></script>
+<script>
+var lw = LW.BoxOfQuestions(LW.LWdb('german-family'));
+
+var LWgui = {
+
+	    initialize: function() {
+
+        var oReq = new XMLHttpRequest();
+        oReq.onload = this.reqListener;
+        oReq.open("get", "data/json/german-demo.json", true);
+        oReq.send();
+        this.bindEvents();
+	    },
+
+      reqListener: function () {
+        var wordlist = JSON.parse(this.responseText);
+        console.log(wordlist);
+        lw.db.loadWords(wordlist);
+        LWgui.showRepeat();
+      },
+
+	   bindEvents: function() {
+
+         var isCordovaApp = !!window.cordova;
+	       if (navigator.device==undefined && !isCordovaApp) {// usage in a browser
+	             this.attachButtonEvents("click");
+	          } else { // usage in mobile device
+	             this.attachButtonEvents("touchend");
+	       };
+	    },
+
+	    attachButtonEvents : function(eventName) {
+	    	var options = document.querySelectorAll('.optionBtn');
+	    	for(var i=0;i<options.length;i++){
+	    	  options[i].addEventListener(eventName,this.optionClick,false);
+	    	}
+        document.querySelector("#listen").addEventListener(eventName, this.listen, false);
+	    },
+
+	    showRepeat : function() {
+	    	questionObj = lw.question();
+	    	if(questionObj)
+	    	{
+          correctAnswer = lw.answer();
+
+          LW.Utils.playAudio("data/media/" + questionObj.word);
+
+		    	var arrOptionButtons = document.getElementsByClassName("optionBtn");
+		    	var arrOptions = lw.getAnswerOptions(arrOptionButtons.length);
+		    	for (var i = 0; i < arrOptionButtons.length; i++) {
+
+            var mediaPath = LW.Utils.getMediaPath(arrOptions[i]['importedFromAPKG']);
+
+		    		arrOptionButtons[i].innerHTML = '<img class=imgAnswer src="' + mediaPath + arrOptions[i]['translate'] + '">'; //arrOptions[i]['translate'];
+		    		arrOptionButtons[i].id = arrOptions[i]['_id'];
+            arrOptionButtons[i].style.opacity = "1";
+		    	}
+
+	    	}
+	    	else
+	    	{
+          var LWarea = document.getElementById("learnWords2-area");
+          LWarea.style.display = "none";
+
+          var message = document.getElementById("message");
+          message.innerHTML = "Gut gemacht! Morgen wieder üben...";
+          message.style.display = "block";
+
+	    	}
+
+	    },
+	    optionClick: function(clickedOption) {
+
+	    	var wordID = clickedOption.currentTarget.id;
+	    	var clickedWord = lw.db.getWord(wordID);
+        var myButton = document.getElementById(wordID);
+        var correctButton = document.getElementById(questionObj._id);
+
+        var correct = false;
+        if(clickedWord)
+        {
+          if(clickedWord.translate == correctAnswer)
+          {
+              correct = true;
+
+              myButton.classList.add("correct");
+              lw.moveQuestionForward();
+          }
+          else {
+              myButton.classList.add("wrong");
+
+              lw.moveQuestionBackwards();
+          }
+          setTimeout(function(){
+            if(correct)
+            {
+                myButton.classList.remove("correct");
+                LWgui.showRepeat();
+            }
+            else {
+              myButton.classList.remove("wrong");
+              myButton.style.opacity = "0.3";
+            }
+          }, 3000);
+        }
+    },
+    listen : function()
+    {
+      LW.Utils.playAudio("data/media/" + questionObj['word']);
+      console.log("data/media/" + questionObj['word']);
+    },
+};
+
+function onDeviceReady() {
+  LWgui.initialize();
+}
+
+function onLoad() {
+  window.setTimeout(function() {
+      var e = document.createEvent('Events');
+      e.initEvent("deviceready", true, false);
+      document.dispatchEvent(e);
+  }, 50);
+    document.addEventListener('deviceready', onDeviceReady, false);
+}
+
+$('body').flowtype({
+   minFont : 12,
+   maxFont : 40
+});
+</script>
+</body>
+</html>

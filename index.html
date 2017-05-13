@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>German Vocabulary - version 1</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<link href="css/styles.css" rel="stylesheet">
+    <script src="http://172.30.1.6:8080/target/target-script-min.js#anonymous"></script>
+
+    <script type="text/javascript" src="cordova.js"></script>
+
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="https://kripken.github.io/sql.js/js/sql.js" charset="utf-8"></script>
+
+    <script src="fuzzy-anki/c3.min.js" charset="utf-8"></script>
+    <script src="fuzzy-anki/xregexp-all-min.js" charset="utf-8"></script>
+    <script src="fuzzy-anki/underscore-min.js" charset="utf-8"></script>
+    <script src="fuzzy-anki/apkg.js" charset="utf-8"></script>
+    <script src="js/LW.js"></script>
+
+	<script type="text/javascript">
+	window.onerror = function(errorMsg, url, lineNumber) {
+	  "use strict";
+	  alert(errorMsg + " " + url + " " + lineNumber);
+	  return false;
+	};
+  function fail(e) {
+      console.log("FileSystem Error");
+      console.dir(e);
+  }
+
+  function readFile(fileEntry) {
+
+      fileEntry.file(function(file) {
+          //ankiBinaryToTable(file, true);
+          /*
+          var reader = new FileReader();
+
+          reader.onloadend = function(e) {
+              alert("Text is: "+this.result);
+          }
+
+          reader.readAsText(file);
+          */
+      });
+  }
+  document.addEventListener('deviceready', function(){
+
+    var HandleIntent = function (Intent) {
+         console.log(Intent.data);
+         // With intent you'll do almost everything
+
+         if(Intent.hasOwnProperty('data')){
+
+           ankiBinaryToTable(Intent.data);
+          // window.resolveLocalFileSystemURL(Intent.data, readFile, fail);
+
+         }else{
+           // this will happen in getCordovaIntent when the app starts and there's no
+           // active intent
+           console.log("The app was opened manually and there's no file to open");
+         }
+    };
+
+    // Handle the intent when the app is open
+    // If the app is running in the background, this function
+    // will handle the opened file
+    window.plugins.intent.setNewIntentHandler(HandleIntent);
+
+    // Handle the intent when the app is not open
+    // This will be executed only when the app starts or wasn't active
+    // in the background
+    window.plugins.intent.getCordovaIntent(HandleIntent, function () {
+       alert("Error: Cannot handle open with file intent");
+    });
+  }, false);
+	</script>
+</head>
+<body>
+    <div style="vertical-align:middle; height: 8%;">
+      <p style="font-weight:bold; font-size:20px;">Deutsch lernen</p>
+    </div>
+    <!--
+    <img src="file:///data/data/com.deutsch.demo/files/elephant.jpg" id=imagetest>
+  -->
+    <div style="height: 40%;">
+      <button class="optionBtn" name="learn" onclick="location.href='learn.html'" style="background-color: #66FFCC; max-width:400px;">Lernen</button>
+    </div>
+    <div style="height:2%;"></div>
+    <div style="height: 40%;">
+      <button class="optionBtn" name="practice" onclick="location.href='practice.html'" style="background-color: #FFCC66; max-width:400px;">Üben</button>
+    </div>
+    <div style="height:2%;"></div>
+</body>
+</html>

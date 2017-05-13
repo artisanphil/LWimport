@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>German Vocabulary - version 1</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<link href="css/styles.css" rel="stylesheet">
+    <script src="http://172.30.1.6:8080/target/target-script-min.js#anonymous"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+	<script type="text/javascript">
+	window.onerror = function(errorMsg, url, lineNumber) {
+	  "use strict";
+	  alert(errorMsg + " " + url + " " + lineNumber);
+	  return false;
+	};
+	</script>
+</head>
+<body onload="onLoad();">
+<article id="repeatScreen">
+
+<div id="learnWords2-area">
+  <div id="optionsForAnswers">
+      <div class="optionRow Learn">
+        <div class="optionCell left"><button type="button" class="optionBtn"></button></div>
+        <div class="optionCell right"><button type="button" class="optionBtn"></button></div>
+      </div>
+      <div class="optionRow Learn">
+        <div class="optionCell left"><button type="button" class=optionBtn></button></div>
+        <div class="optionCell right"><button type="button" class="optionBtn"></button></div>
+      </div>
+      <div id=back style="margin-left: 2%; float:left;"><button type="button" class="backforwardBtn" onclick="LWgui.back();"><</button></div>
+      <div id=forward style="margin-right: 2%; float:right;"><button type="button" class="backforwardBtn" onclick="LWgui.forward();">></button></div>
+  </div>
+
+</div>
+<div id=message style="display:none;"></div>
+</article>
+
+<script src="js/LW.js"></script>
+<script src="js/LWutils.js"></script>
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/flowtype.js"></script>
+<script>
+var lw = LW.BoxOfQuestions(LW.LWdb('german-family'));
+var wordNumber = 1;
+
+var LWgui = {
+
+	    initialize: function() {
+
+        var oReq = new XMLHttpRequest();
+        oReq.onload = this.reqListener;
+        oReq.open("get", "data/json/german-demo.json", true);
+        oReq.send();
+        this.bindEvents();
+	    },
+
+      reqListener: function () {
+        var wordlist = JSON.parse(this.responseText);
+        console.log(wordlist);
+        lw.db.loadWords(wordlist);
+        LWgui.showRepeat();
+      },
+
+	   bindEvents: function() {
+
+         var isCordovaApp = !!window.cordova;
+	       if (navigator.device==undefined && !isCordovaApp) {// usage in a browser
+	             this.attachButtonEvents("click");
+	          } else { // usage in mobile device
+	             this.attachButtonEvents("touchend");
+	       };
+	    },
+
+	    attachButtonEvents : function(eventName) {
+	    	var options = document.querySelectorAll('.optionBtn');
+	    	for(var i=0;i<options.length;i++){
+	    	  options[i].addEventListener(eventName,this.listen,false);
+	    	}
+	    },
+
+	    showRepeat : function() {
+
+		    	var arrOptionButtons = document.getElementsByClassName("optionBtn");
+		    	var arrOptions = lw.getAnswerOptions(arrOptionButtons.length);
+
+		    	for (var i = 0; i <  4; i++) {
+            var w = wordNumber + i;
+            var questionObj = lw.db.getWord(w);
+
+            var mediaPath = LW.Utils.getMediaPath(questionObj.importedFromAPKG);
+
+            if(questionObj != null)
+            {
+                  arrOptionButtons[i].style.visibility = "visible";
+  	    		      arrOptionButtons[i].innerHTML = '<img class=imgAnswer src="' + mediaPath + questionObj.translate + '">'; //arrOptions[i]['translate'];
+  	    		      arrOptionButtons[i].id = questionObj._id;
+            }
+            else {
+              arrOptionButtons[i].style.visibility = "hidden";
+            }
+          }
+        var nextButton = document.getElementById("forward");
+
+        if((wordNumber + 4) >= lw.db.numberOfWords())
+        {
+          nextButton.style.visibility = 'hidden';
+        }
+        else {
+          nextButton.style.visibility = 'visible';
+        }
+
+	    },
+      back : function() {
+
+        if(wordNumber > 1){
+          wordNumber = wordNumber - 4;
+          this.showRepeat();
+        }
+        else {
+          window.location.href = "index.html";
+        }
+      },
+      forward : function() {
+
+        if(wordNumber < lw.db.numberOfWords()){
+          wordNumber = wordNumber + 4;
+          this.showRepeat();
+        }
+      },
+
+    listen : function(clickedOption)
+    {
+      var wordID = clickedOption.currentTarget.id;
+      var clickedWord = lw.db.getWord(wordID);
+      LW.Utils.playAudio("data/media/" + clickedWord.word);
+    },
+};
+
+function onDeviceReady() {
+  LWgui.initialize();
+}
+
+function onLoad() {
+  window.setTimeout(function() {
+      var e = document.createEvent('Events');
+      e.initEvent("deviceready", true, false);
+      document.dispatchEvent(e);
+  }, 50);
+    document.addEventListener('deviceready', onDeviceReady, false);
+}
+
+$('body').flowtype({
+   minFont : 12,
+   maxFont : 40
+});
+</script>
+</body>
+</html>

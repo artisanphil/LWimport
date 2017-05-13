@@ -1,0 +1,131 @@
+html,body{height:100% !important; width:100% !important; margin:0px; padding:0px;}
+body {
+  text-align: center;
+  padding-top: 1%;
+}
+article {height: 100%;}
+button:focus {
+  outline: none;
+}
+
+.imgAnswer {
+  width: auto;
+  max-width: 100%;
+  height:100%;
+}
+#learnWords2-area {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+}
+#question {
+  height: 10%;
+}
+#listen {
+  height: 100%;
+}
+#optionsForAnswers {
+  height: 90%;
+  width: 100%;
+  text-align: center;
+  overflow:hidden;
+}
+#back, #forward {
+  width:45%;
+}
+.left {
+	float:left;
+  width: 47%;
+  height: 100%;
+	/* max-width:300px; */
+	text-align: center;
+  margin-right: 1%;
+  margin-left: 2%;
+}
+.right {
+	 /* float: left; */
+	 overflow:hidden;
+   width: 48%;
+   height: 100%;
+   margin-right: 2%;
+   margin-left: 1%;
+	 /* max-width: 300px; */
+	 text-align: center;
+}
+.backforwardBtn {
+  width: 100%;
+  height: 100%;
+  font-size: 150%;
+  background-color: #FFFFFF;
+}
+.optionBtn {
+  width: 100%;
+  height: 100%;
+  font-size: 150%;
+  background-color: #FFFFFF;
+}
+/* displays a cross for the wrong answer
+<button type="button" class="optionBtn wrong">
+*/
+.optionBtn.wrong {
+  border-color: red;
+  border-width: 5px;
+  box-shadow: none;
+  border-style: dotted;
+}
+/* displays a tick for the correct answer
+<button type="button" class="optionBtn correct">
+*/
+.optionBtn.correct {
+  border-color: green;
+  border-width: 5px;
+  box-shadow: none;
+  border-style: solid;
+}
+
+.optionCell { margin-bottom: 1%; }
+.optionRow {
+  height: 45%;
+  display: inline-block;
+  text-align: left;
+  width: 100%;
+}
+.optionRow.Learn {
+  height: 35%;
+}
+@media screen and (orientation:portrait) {
+   .left {
+   float: left;
+    width: 100%;
+    max-width: 100%;
+    margin-right: 0px;
+    margin-left: 0px;
+    margin-bottom: 5px;
+  }
+  .right {
+    float:left;
+    width: 100%;
+    max-width: 100%;
+    margin-right: 0px;
+    margin-left: 0px;
+    margin-bottom: 5px;
+  }
+  .optionRow {
+    width: 100%;
+    height: 45%;
+    margin-bottom: 5px;
+  }
+  .optionRow.Learn {
+    height: 45%;
+  }
+
+  .optionCell {
+    height: 50%;
+  }
+  .optionBtn {
+    height: 100%;
+  }
+  #back, #forward {
+    margin-top: 2%;
+  }
+}

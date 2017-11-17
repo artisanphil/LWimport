@@ -15,7 +15,12 @@ if(typeof(LW.Utils) == 'undefined' || LW.Utils == null || !LW.Utils){
 	LW.Utils = {
 		getMediaPath: function(importedFromAPKG){
 			var mediaPathPackaged = "data/media/";
-			var mediaPathImported = cordova.file.dataDirectory + "media/";
+			var isCordovaApp = !!window.cordova;
+			var mediaPathImported = "media/";
+			if(isCordovaApp)
+			{
+				mediaPathImported = cordova.file.dataDirectory + "media/";
+			}
 
 			if(importedFromAPKG == 1) {
 				return mediaPathImported;
@@ -43,6 +48,9 @@ if(typeof(LW.Utils) == 'undefined' || LW.Utils == null || !LW.Utils){
 
 			var my_media = null;
 
+			console.log("play: " + src);
+			my_media = new Audio(src);
+			/*
 			if(isCordovaApp)
 			{
 				my_media = new Media(cordova.file.applicationDirectory + "www/" + src);
@@ -51,7 +59,17 @@ if(typeof(LW.Utils) == 'undefined' || LW.Utils == null || !LW.Utils){
 			{
 				my_media = new Audio(src);
 			}
+			*/
 			my_media.play();
+		},
+		getParameterByName: function(name, url) {
+		    if (!url) url = window.location.href;
+		    name = name.replace(/[\[\]]/g, "\\$&");
+		    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+		        results = regex.exec(url);
+		    if (!results) return null;
+		    if (!results[2]) return '';
+		    return decodeURIComponent(results[2].replace(/\+/g, " "));
 		},
         delay: 0     //    Utils.delay = 24h * 60m * 60s * 100μs
 	};

@@ -7,7 +7,15 @@ article {height: 100%;}
 button:focus {
   outline: none;
 }
-
+.category {
+  width:24%;
+  margin-left: 1%;
+  height: 200px;
+  border-color: #CCCCCC;
+  border-width: 1px;
+  border-style: solid;
+  display:inline-block;
+}
 .imgAnswer {
   width: auto;
   max-width: 100%;

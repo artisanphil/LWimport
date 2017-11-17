@@ -6,12 +6,13 @@ function BoxOfQuestions(db) {
         'use strict';
 
         // private variables
+        var _allWords = {};
+        var _allWordsFilteredByTag = {};
 
         var _question = null; // no current question
         var _wordsToRepeat = null; // words which are eligible to be repeated.
                                    // initialisation to null forces calculation
                                    // on first call of wordsToRepeat()
-
         var _status = {};
         var _sessionExpiryTimeInSeconds = 1800;
 
@@ -25,16 +26,6 @@ function BoxOfQuestions(db) {
                // is called the next time.
 
         };
-
-
-
-
-
-
-
-
-
-
 
 
         var _updateSessionInfo = function(sessionExpiryTimeInSeconds){
@@ -155,11 +146,11 @@ function BoxOfQuestions(db) {
 
 
 
-        question : function(){
+        question : function(tag){
             // gives back a question to ask
             if (!_question) {
                  // _question is null, go for a new one.
-                 var wds = this.wordsToRepeat();
+                 var wds = this.wordsToRepeat(tag);
                  if (wds !== null) {_question = this.chooseRandomObject(wds);}
             }
             return _question;
@@ -249,51 +240,133 @@ function BoxOfQuestions(db) {
        this.db.importFrom(anArrayOfObjects);
        },
 
+       allWordsFilteredByTag : function(tag) {
 
+             _allWordsFilteredByTag = lw.wordsByTag(this.db.allWords(), tag);
 
+             console.log("allWordsFilteredByTag");
 
+             return _allWordsFilteredByTag;
+         },
 
-
-
-
-       getAnswerOptions : function(numberOfOptions){
-          // simple implementation : choose from all available words
-          // As we use ECMA5script findIndex is not available.
-          // We have to duplicate the effort in keeping an array of id
-          // numbers called idsOfOptions and an array of objects called
-          // options.
-
-          var n = (db.getSettings()).numberOfOptions;
-
-          var options = [];
-
-          if (db.numberOfWords() >= n) {
-
-             var q = this.question();
-             options.push(q);
-
-	     var idsOfOptions = [];
-             idsOfOptions.push(q._id);
-
-             var anOption;
-             var allWords =  this.db.allWords();
-
-             do {
-                // choose option from all words.
-                anOption = this.chooseRandomObject(allWords);
-
-                if (idsOfOptions.indexOf(anOption._id) == -1) {
-                        // the new option is not included yet
-			idsOfOptions.push(anOption._id);
-                        options.push(anOption);
-               }
-
-             } while (options.length < n);
-
-
+      findID : function (id) {
+        for(var i in _allWordsFilteredByTag){
+          if(id == _allWordsFilteredByTag[i]._id)
+          {
+            return i;
           }
-          return _shuffle(options);
-       },
+        }
+      },
+       getWord : function(anInteger) {
+
+          var StorageKey = anInteger
+           try{
+               var aWord = _allWordsFilteredByTag[anInteger];
+               if(aWord){
+                 if(!aWord.hasOwnProperty("step")){
+                     aWord.step = _defaultInitialStepValue;
+                 }
+                 if(!aWord.date){
+                     aWord.date = 0;
+                 }
+               }
+               return aWord;
+           }catch(e){
+             console.log(e);
+               return null;
+           }
+
+         },
+
+
+         getLearnCards : function(tag){
+            // simple implementation : choose from all available words
+            // As we use ECMA5script findIndex is not available.
+            // We have to duplicate the effort in keeping an array of id
+            // numbers called idsOfOptions and an array of objects called
+            // options.
+
+            var n = (db.getSettings()).numberOfOptions;
+
+            var options = [];
+
+            if (db.numberOfWords() >= n) {
+
+  	           var idsOfOptions = [];
+               //idsOfOptions.push(q._id);
+
+               var anOption;
+
+               do {
+                  // choose option from all words.
+                  anOption = this.chooseRandomObject(_allWordsFilteredByTag);
+
+                  if(options.length == _allWordsFilteredByTag.length && _allWordsFilteredByTag.length < n){
+                    break;
+                  }
+
+                  //if (idsOfOptions.indexOf(anOption._id) == -1 && anOption.tags == tag) {
+                  if (idsOfOptions.indexOf(anOption._id) == -1) {
+                      // the new option is not included yet
+                      idsOfOptions.push(anOption._id);
+                      options.push(anOption);
+                 }
+
+              } while (options.length < _allWordsFilteredByTag.length);
+
+            }
+
+            return _shuffle(options);
+         },
+
+
+         getAnswerOptions : function(tag){
+            // simple implementation : choose from all available words
+            // As we use ECMA5script findIndex is not available.
+            // We have to duplicate the effort in keeping an array of id
+            // numbers called idsOfOptions and an array of objects called
+            // options.
+
+            var n = (db.getSettings()).numberOfOptions;
+
+            var options = [];
+
+            if (db.numberOfWords() >= n) {
+
+               var q = this.question(tag);
+               options.push(q);
+
+  	           var idsOfOptions = [];
+               idsOfOptions.push(q._id);
+
+               var anOption;
+              // var allWords =  this.db.allWords();
+
+               var countTries = 0;
+               do {
+                  // choose option from all words.
+                  anOption = this.chooseRandomObject(_allWordsFilteredByTag);
+
+                  if (idsOfOptions.indexOf(anOption._id) == -1) {
+                          // the new option is not included yet
+  			                  idsOfOptions.push(anOption._id);
+                          options.push(anOption);
+                 }
+                 else {
+                   countTries++;
+                   if(countTries >= 10)
+                   {
+                     //no other answer possiblities exist, so exit
+                     break;
+                   }
+                 }
+
+               } while (options.length < n);
+
+
+            }
+            return _shuffle(options);
+         },
 
 
 
@@ -360,13 +433,18 @@ function BoxOfQuestions(db) {
 
 
 
+       wordsByTag : function(wordsToFilter, tag){
+
+         function hasThisTag(aWord) {
+              return (aWord.tags == tag);
+         }
+
+         return (wordsToFilter).filter(hasThisTag);
+       },
 
 
 
-
-
-
-       wordsToRepeat : function(){
+       wordsToRepeat : function(tag){
 
           // calculate the array with words which are to be learned/repeated during a sessio
 
@@ -381,8 +459,6 @@ function BoxOfQuestions(db) {
           function isToBeRepeated(aWord) {
                return (aWord.step >= lowestStep) && (todayNow >= aWord.date);
           }
-
-
 
           if (_question === null || _wordsToRepeat === null ) {
                 // _question == null means that either a question has never
@@ -410,6 +486,11 @@ function BoxOfQuestions(db) {
                 }
 
           }
+
+          _wordsToRepeat = lw.wordsByTag(_wordsToRepeat, tag);
+
+          console.log("words to repeat:");
+          console.log(_wordsToRepeat);
 
           return _wordsToRepeat;
        },
@@ -617,11 +698,6 @@ var LWdb = function(name) {
          return this.persistentStorageOK();
       },
 
-
-
-
-
-
     numberOfWords : function() {
 
        var key = dbName+"-numberOfWords";
@@ -682,8 +758,8 @@ var LWdb = function(name) {
 
 
 
-
-    getWord : function(anInteger) {
+    /*
+    getWord : function(anInteger, tag) {
         var storageKey = _wdKeyFor(anInteger);
         try{
             var aWord = JSON.parse(localStorage.getItem(storageKey));
@@ -698,7 +774,7 @@ var LWdb = function(name) {
             return null;
         }
     },
-
+    */
 
 
     importFrom : function(obj) {

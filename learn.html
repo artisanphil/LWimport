@@ -2,10 +2,9 @@
 <html>
 <head>
     <meta charset="utf-8">
-	<title>German Vocabulary - version 1</title>
+	<title>LearnWords</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   	<link href="css/styles.css" rel="stylesheet">
-    <script src="http://172.30.1.6:8080/target/target-script-min.js#anonymous"></script>
     <script type="text/javascript" src="cordova.js"></script>
 	<script type="text/javascript">
 	window.onerror = function(errorMsg, url, lineNumber) {
@@ -28,7 +27,7 @@
         <div class="optionCell left"><button type="button" class=optionBtn></button></div>
         <div class="optionCell right"><button type="button" class="optionBtn"></button></div>
       </div>
-      <div id=back style="margin-left: 2%; float:left;"><button type="button" class="backforwardBtn" onclick="LWgui.back();"><</button></div>
+      <div id=back style="margin-left: 2%; float:left;"><button type="button" class="backforwardBtn"><</button></div>
       <div id=forward style="margin-right: 2%; float:right;"><button type="button" class="backforwardBtn" onclick="LWgui.forward();">></button></div>
   </div>
 
@@ -42,25 +41,16 @@
 <script src="js/flowtype.js"></script>
 <script>
 var lw = LW.BoxOfQuestions(LW.LWdb('german-family'));
+
 var wordNumber = 1;
 
 var LWgui = {
 
 	    initialize: function() {
 
-        var oReq = new XMLHttpRequest();
-        oReq.onload = this.reqListener;
-        oReq.open("get", "data/json/german-demo.json", true);
-        oReq.send();
         this.bindEvents();
-	    },
-
-      reqListener: function () {
-        var wordlist = JSON.parse(this.responseText);
-        console.log(wordlist);
-        lw.db.loadWords(wordlist);
         LWgui.showRepeat();
-      },
+	    },
 
 	   bindEvents: function() {
 
@@ -81,20 +71,37 @@ var LWgui = {
 
 	    showRepeat : function() {
 
+          var tag = LW.Utils.getParameterByName("tag", window.location);
+
+          document.getElementById('back').setAttribute('onclick', "LWgui.back('" + tag + "');");
+          var wordsFilteredByTag = lw.allWordsFilteredByTag(tag);
+
 		    	var arrOptionButtons = document.getElementsByClassName("optionBtn");
-		    	var arrOptions = lw.getAnswerOptions(arrOptionButtons.length);
+		    	var arrOptions = lw.getLearnCards(tag);
 
-		    	for (var i = 0; i <  4; i++) {
-            var w = wordNumber + i;
-            var questionObj = lw.db.getWord(w);
+          //console.log(arrOptions);
 
-            var mediaPath = LW.Utils.getMediaPath(questionObj.importedFromAPKG);
-
+          var numberOfOptions = 4;
+          if(arrOptions.length < numberOfOptions)
+          {
+            if(wordNumber > 4) {
+              numberOfOptions = arrOptions.length - (wordNumber + 4);
+            }
+            else {
+              numberOfOptions = arrOptions.length;
+            }
+          }
+          console.log(numberOfOptions);
+		    	for (var i = 0; i < numberOfOptions; i++) {
+            var w = wordNumber + i - 1;
+            var questionObj = lw.getWord(w);
             if(questionObj != null)
             {
+                var mediaPath = LW.Utils.getMediaPath(questionObj.importedFromAPKG);
+
                   arrOptionButtons[i].style.visibility = "visible";
   	    		      arrOptionButtons[i].innerHTML = '<img class=imgAnswer src="' + mediaPath + questionObj.translate + '">'; //arrOptions[i]['translate'];
-  	    		      arrOptionButtons[i].id = questionObj._id;
+  	    		      arrOptionButtons[i].id = w; //questionObj._id;
             }
             else {
               arrOptionButtons[i].style.visibility = "hidden";
@@ -102,7 +109,7 @@ var LWgui = {
           }
         var nextButton = document.getElementById("forward");
 
-        if((wordNumber + 4) >= lw.db.numberOfWords())
+        if((wordNumber + 4) > arrOptions.length)
         {
           nextButton.style.visibility = 'hidden';
         }
@@ -111,14 +118,14 @@ var LWgui = {
         }
 
 	    },
-      back : function() {
+      back : function(tag) {
 
         if(wordNumber > 1){
           wordNumber = wordNumber - 4;
           this.showRepeat();
         }
         else {
-          window.location.href = "index.html";
+          window.location.href = "choose-mode.html?tag=" + tag;
         }
       },
       forward : function() {
@@ -132,8 +139,11 @@ var LWgui = {
     listen : function(clickedOption)
     {
       var wordID = clickedOption.currentTarget.id;
-      var clickedWord = lw.db.getWord(wordID);
-      LW.Utils.playAudio("data/media/" + clickedWord.word);
+      var clickedWord = lw.getWord(wordID);
+
+      var mediaPath = LW.Utils.getMediaPath(clickedWord.importedFromAPKG);
+
+      LW.Utils.playAudio(mediaPath + clickedWord.word);
     },
 };
 

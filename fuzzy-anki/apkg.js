@@ -101,6 +101,21 @@ function sqlToTable(uInt8ArraySQLdb) {
 
 }
 
+function transferFile(sourceFilePath, targetFilePath) {
+  var ft = new FileTransfer();
+  ft.download(
+        sourceFilePath,
+        targetFilePath,
+        function(entry){
+           console.log(targetFilePath);
+           console.log("file copy success");
+        },
+        function(error){
+           console.log(error);
+        }
+    );
+}
+
 function parseMedia(imageTable,unzip,filenames){
     var map = {};
 
@@ -110,18 +125,8 @@ function parseMedia(imageTable,unzip,filenames){
 
         var sourceFilePath = "file:///sdcard/Download/unzipped/" + prop;
         var targetFilePath = cordova.file.dataDirectory + "media/" + imageTable[prop];
-        var ft = new FileTransfer();
-        ft.download(
-              sourceFilePath,
-              targetFilePath,
-              function(entry){
-                 console.log(targetFilePath);
-                 console.log("file copy success")
-              },
-              function(error){
-                 console.log(error);
-              }
-          );
+
+        transferFile(sourceFilePath,targetFilePath);
       }
     }
 }

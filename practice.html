@@ -50,19 +50,9 @@ var LWgui = {
 
 	    initialize: function() {
 
-        var oReq = new XMLHttpRequest();
-        oReq.onload = this.reqListener;
-        oReq.open("get", "data/json/german-demo.json", true);
-        oReq.send();
         this.bindEvents();
-	    },
-
-      reqListener: function () {
-        var wordlist = JSON.parse(this.responseText);
-        console.log(wordlist);
-        lw.db.loadWords(wordlist);
         LWgui.showRepeat();
-      },
+	    },
 
 	   bindEvents: function() {
 
@@ -83,22 +73,31 @@ var LWgui = {
 	    },
 
 	    showRepeat : function() {
-	    	questionObj = lw.question();
+        var tag = LW.Utils.getParameterByName("tag", window.location);
+        var wordsFilteredByTag = lw.allWordsFilteredByTag(tag);
+
+	    	questionObj = lw.question(tag);
+        console.log("questionObj");
+        console.log(questionObj);
 	    	if(questionObj)
 	    	{
           correctAnswer = lw.answer();
 
-          LW.Utils.playAudio("data/media/" + questionObj.word);
+          var mediaPathSound = LW.Utils.getMediaPath(questionObj['importedFromAPKG']);
+          LW.Utils.playAudio(mediaPathSound + questionObj.word);
 
 		    	var arrOptionButtons = document.getElementsByClassName("optionBtn");
-		    	var arrOptions = lw.getAnswerOptions(arrOptionButtons.length);
+		    	var arrOptions = lw.getAnswerOptions(tag);
 		    	for (var i = 0; i < arrOptionButtons.length; i++) {
 
-            var mediaPath = LW.Utils.getMediaPath(arrOptions[i]['importedFromAPKG']);
+            if(arrOptions[i])
+            {
+              var mediaPathImg = LW.Utils.getMediaPath(arrOptions[i]['importedFromAPKG']);
 
-		    		arrOptionButtons[i].innerHTML = '<img class=imgAnswer src="' + mediaPath + arrOptions[i]['translate'] + '">'; //arrOptions[i]['translate'];
-		    		arrOptionButtons[i].id = arrOptions[i]['_id'];
-            arrOptionButtons[i].style.opacity = "1";
+  		    		arrOptionButtons[i].innerHTML = '<img class=imgAnswer src="' + mediaPathImg + arrOptions[i]['translate'] + '">'; //arrOptions[i]['translate'];
+  		    		arrOptionButtons[i].id = arrOptions[i]['_id'];
+              arrOptionButtons[i].style.opacity = "1";
+            }
 		    	}
 
 	    	}
@@ -117,12 +116,13 @@ var LWgui = {
 	    optionClick: function(clickedOption) {
 
 	    	var wordID = clickedOption.currentTarget.id;
-	    	var clickedWord = lw.db.getWord(wordID);
+        var w = lw.findID(wordID);
+	    	var clickedWord = lw.getWord(w); //lw.db.getWord(wordID);
         var myButton = document.getElementById(wordID);
-        var correctButton = document.getElementById(questionObj._id);
+        //var correctButton = document.getElementById(questionObj._id);
 
         var correct = false;
-        if(clickedWord)
+        if(myButton)
         {
           if(clickedWord.translate == correctAnswer)
           {
@@ -139,6 +139,7 @@ var LWgui = {
           setTimeout(function(){
             if(correct)
             {
+              console.log("removeCorrect " + wordID);
                 myButton.classList.remove("correct");
                 LWgui.showRepeat();
             }
@@ -151,7 +152,8 @@ var LWgui = {
     },
     listen : function()
     {
-      LW.Utils.playAudio("data/media/" + questionObj['word']);
+      var mediaPath = LW.Utils.getMediaPath(questionObj['importedFromAPKG']);
+      LW.Utils.playAudio(mediaPath + questionObj['word']);
       console.log("data/media/" + questionObj['word']);
     },
 };

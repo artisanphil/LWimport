@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>LearnWords</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<link href="css/styles.css" rel="stylesheet">
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script src="js/LW.js"></script>
+    <script src="js/LWutils.js"></script>
+</head>
+<body>
+  <script>
+  window.onload = function(){
+    var tag = LW.Utils.getParameterByName("tag", window.location)
+    document.getElementById('learnButton').setAttribute('onclick', "location.href='learn.html?tag=" + tag + "'");
+    document.getElementById('practiceButton').setAttribute('onclick', "location.href='practice.html?tag=" + tag + "'");
+  }
+  </script>
+    <div style="height: 40%;">
+      <button id=learnButton class="optionBtn" name="learn" style="max-width:400px;"><img src="media/symbols/learn.png" style="max-width:100%; max-height: 100%;"></button>
+    </div>
+    <div style="height:2%;"></div>
+    <div style="height: 40%;">
+      <button id=practiceButton class="optionBtn" name="practice" style="max-width:400px;"><img src="media/symbols/practice.png" style="max-width:100%; max-height: 100%;"></button>
+    </div>
+    <div style="height:2%;"></div>
+    <div style="height: 15%;">
+      <img src="media/symbols/home.png" onclick="location.href='index.html';" style="max-width:100%; max-height:100%;">
+    </div>
+    <div style="height:2%;"></div>
+</body>
+</html>

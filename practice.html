@@ -6,7 +6,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   	<link href="css/styles.css" rel="stylesheet">
       <script type="text/javascript" src="cordova.js"></script>
-      <script src="http://192.168.1.103:8080/target/target-script-min.js#anonymous"></script>
 	<script type="text/javascript">
 	window.onerror = function(errorMsg, url, lineNumber) {
 	  "use strict";
@@ -51,6 +50,9 @@ var LWgui = {
 
 	    initialize: function() {
 
+        console.log("initialize practice");
+        lw.resetSteps();
+
         this.bindEvents();
         LWgui.showRepeat();
 	    },
@@ -79,8 +81,7 @@ var LWgui = {
 
 	    	questionObj = lw.question(tag);
         console.log("questionObj");
-        console.log(questionObj);
-	    	if(questionObj)
+	    	if(typeof questionObj !== 'undefined')
 	    	{
           correctAnswer = lw.answer();
 
@@ -135,7 +136,7 @@ var LWgui = {
           else {
               myButton.classList.add("wrong");
 
-              lw.moveQuestionBackwards();
+              ////lw.moveQuestionBackwards();
           }
           setTimeout(function(){
             if(correct)

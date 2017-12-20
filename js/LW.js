@@ -181,6 +181,8 @@ function BoxOfQuestions(db) {
 
                 _question.date = new Date().valueOf() + (this.db.getSettings()).delay;
 
+                console.log("moveQuestionBackwards");
+                console.log(_question);
 
                 _question.step = 0;
 
@@ -194,7 +196,20 @@ function BoxOfQuestions(db) {
             }
         },
 
-
+        resetSteps : function(){
+          var wordlist = this.db.allWords();
+          for(var i=0;i<wordlist.length;i++) {
+            _question = wordlist[i];
+            if(_question.step >= 0)
+            {
+              _question.step = -1;
+              _question.date = 0;
+              console.log("reset");
+              this.db.putWord(_question);
+            }
+          }
+          _question = null;
+        },
 
        answerWasWrong : function(){this.moveQuestionBackwards();},
 
@@ -405,6 +420,7 @@ function BoxOfQuestions(db) {
 
 
        addMoreWordsForLearning : function(n){
+         console.log("addMoreWordsForLearning");
           // update n words with step value < 0 to have a step value of 0
           var lowestStepValue = this.db.getSettings().lowestStepValue;
           var candidatesToAdd = this.wordsWithStepValue(lowestStepValue,-1);
@@ -468,6 +484,8 @@ function BoxOfQuestions(db) {
                 // In both cases a new _wordsToRepeat collection is necessary.
 
                 _wordsToRepeat = (this.db.allWords()).filter(isToBeRepeated);
+
+                console.log(_wordsToRepeat);
 
                 _sessionExpiryTimeInSeconds = (this.db.getSettings()).sessionExpiryTimeInSeconds;
                 _updateSessionInfo(_sessionExpiryTimeInSeconds);
@@ -744,6 +762,8 @@ var LWdb = function(name) {
 
         // save the word
 
+        console.log("set local storage:");
+        console.log(aWord);
         localStorage.setItem(storageKey, JSON.stringify(aWord));
 
         // if the word has not existed before increment the number of words

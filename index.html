@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   	<link href="css/styles.css" rel="stylesheet">
     <script type="text/javascript" src="cordova.js"></script>
+    <script src="http://192.168.1.103:8080/target/target-script-min.js#anonymous"></script>
 
     <script src="js/jquery-3.1.1.min.js"></script>
     <script src="js/sql.js" charset="utf-8"></script>
@@ -103,8 +104,12 @@
 
          if(Intent.hasOwnProperty('data')){
 
-           ankiBinaryToTable(Intent.data);
-           //isplayLessons();
+           //ankiBinaryToTable(Intent.data);
+
+           ankiBinaryToTable(Intent.data, function() {
+             displayLessons();
+
+           });
           // window.resolveLocalFileSystemURL(Intent.data, readFile, fail);
 
          }else{
@@ -139,5 +144,6 @@
     </div>
     <div id=categories></div>
     <div style="height:2%;"></div>
+    <progress id=importProgress style="display:none;">
 </body>
 </html>

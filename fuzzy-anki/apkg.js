@@ -109,7 +109,7 @@ function sqlToTable(uInt8ArraySQLdb) {
 
 }
 
-function transferFile(sourceFilePath, targetFilePath) {
+function transferFile(sourceFilePath, targetFilePath, callbackTransfer) {
   var ft = new FileTransfer();
   ft.download(
         sourceFilePath,
@@ -117,6 +117,7 @@ function transferFile(sourceFilePath, targetFilePath) {
         function(entry){
            console.log(targetFilePath);
            console.log("file copy success");
+           callbackTransfer();
         },
         function(error){
            console.log(error);
@@ -124,14 +125,30 @@ function transferFile(sourceFilePath, targetFilePath) {
     );
 }
 
-function parseMedia(imageTable,unzip,filenames){
+function parseMedia(imageTable,unzip,filenames, callback2){
     var map = {};
-
+    console.log("start parseMedia");
+    var progressbar = document.getElementById("importProgress");
+    progressbar.style.display = "inline";
+    progressbar.max = filenames.length - 2;
+    var p = 0;
     for (var prop in imageTable) {
       if (filenames.indexOf(prop) >= 0) {
         var sourceFilePath = "file:///sdcard/download/unzipped/" + prop;
         var targetFilePath = cordova.file.dataDirectory + "media/" + imageTable[prop].replace(/[^a-zA-Z0-9.]/g, "");
-        transferFile(sourceFilePath,targetFilePath);
+        transferFile(sourceFilePath,targetFilePath, function() {
+          //waiting for files to be transfered
+          p++;
+          progressbar.value = p;
+
+          console.log("p: " + p);
+          if(p == (filenames.length - 2))
+          {
+            progressbar.style.display = "none";
+            console.log("finish parseMedia");
+            callback2();
+          }
+        });
       }
     }
 }
@@ -196,7 +213,7 @@ function getFileText(fileEntry, type, callback) {
          });
 }
 
-function ankiBinaryToTable(ankiArray) {
+function ankiBinaryToTable(ankiArray, callback) {
     //var compressed = new Uint8Array(ankiArray);
     //var unzip = new Zlib.Unzip(compressed);
 
@@ -213,18 +230,16 @@ function ankiBinaryToTable(ankiArray) {
             if (filenames.indexOf("media") >= 0) {
                 //var plainmedia = unzip.decompress("media");
                 getFileText("file:///sdcard/Download/unzipped/media", "text", function(plainmedia) {
-                  parseMedia(JSON.parse(plainmedia),"",filenames);
-                  /*
-                  var bb = new Blob([new Uint8Array(plainmedia)]);
-                  var f = new FileReader();
-                  f.onload = function(e) {
-                    parseMedia(JSON.parse(e.target.result),unzip,filenames);
-                  };
-                  f.readAsText(bb);
-                  */
+                  parseMedia(JSON.parse(plainmedia),"",filenames, function() {
+                    console.log("import complete");
+                    callback();
+                  });
                 });
             }
-
+            else
+            {
+            callback();
+            }
           });
         }
       });

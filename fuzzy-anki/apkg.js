@@ -16,7 +16,7 @@ function loadIntoStorage(datatable, columns) {
     for(x in datatable[i]) {
       //datatable[i][x] = datatable[i][x].replace(/\[sound:(.*?)\]/g, '<audio controls src="$1" />');
       datatable[i][x] = datatable[i][x].replace(/\[sound:(.*?)\]/g, '$1');
-      datatable[i][x] = datatable[i][x].replace(/<img[^>]+src="?([^"\s]+)"?\s*\/>/g, '$1');
+      datatable[i][x] = datatable[i][x].replace(/<img[^>]+src="?([^"]+)"?\s*\/>/g, '$1');
     }
   }
 
@@ -35,12 +35,17 @@ function loadIntoStorage(datatable, columns) {
       if(x == 0)
       {
         //alert(datatable[i][data]);
-        wordlist[i]['word'] = datatable[i][data];
+        wordlist[i]['word'] = datatable[i][data].normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
       }
       if(x == 1)
       {
-        wordlist[i]['translate'] = datatable[i][data];
+        wordlist[i]['translate'] = datatable[i][data].normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
       }
+      if(x == 2)
+      {
+        wordlist[i]['tags'] = datatable[i][data];
+      }
+
       x++;
     }
   }
@@ -49,7 +54,7 @@ function loadIntoStorage(datatable, columns) {
   lw.db.loadWords(wordlist);
 
   for (var key in localStorage) {
-    console.log(key + ':' + localStorage[key]);
+    ////console.log(key + ':' + localStorage[key]);
   }
 }
 
@@ -68,10 +73,11 @@ function sqlToTable(uInt8ArraySQLdb) {
     var models = Function('return ' + col[0].values[0][0])();
 
     // Notes table, for raw facts that make up individual cards
-    deckNotes = db.exec("SELECT mid,flds FROM notes");
+    deckNotes = db.exec("SELECT mid,flds,tags FROM notes");
 
     _.each(_.keys(models), function(key) {
         models[key].fields = _.pluck(models[key].flds, 'name');
+        //models[key].fields = _.pluck(models[key].tags, 'name');;
     });
 
     var notesByModel =
@@ -80,8 +86,10 @@ function sqlToTable(uInt8ArraySQLdb) {
     deckNotes = _.map(notesByModel, function(notesArray, modelId) {
         var modelName = models[modelId].name;
         var fieldNames = models[modelId].fields;
+        fieldNames.push("tags");
         var notesArray = _.map(notesArray, function(note) {
             var fields = note[1].split(ankiSeparator);
+            fields.push(note[2]);
             return arrayNamesToObj(fieldNames, fields);
         });
         return {name : modelName, notes : notesArray, fieldNames : fieldNames};
@@ -119,13 +127,10 @@ function transferFile(sourceFilePath, targetFilePath) {
 function parseMedia(imageTable,unzip,filenames){
     var map = {};
 
-
     for (var prop in imageTable) {
       if (filenames.indexOf(prop) >= 0) {
-
-        var sourceFilePath = "file:///sdcard/Download/unzipped/" + prop;
-        var targetFilePath = cordova.file.dataDirectory + "media/" + imageTable[prop];
-
+        var sourceFilePath = "file:///sdcard/download/unzipped/" + prop;
+        var targetFilePath = cordova.file.dataDirectory + "media/" + imageTable[prop].replace(/[^a-zA-Z0-9.]/g, "");
         transferFile(sourceFilePath,targetFilePath);
       }
     }
@@ -151,7 +156,7 @@ function listDir(path, callback){
         function (entries) {
           var filenames = [];
           for (i=0; i<entries.length; i++) {
-              console.log(entries[i].name);
+              ////console.log(entries[i].name);
               filenames.push(entries[i].name);
           }
           callback(filenames);

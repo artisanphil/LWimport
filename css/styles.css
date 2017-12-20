@@ -9,12 +9,20 @@ button:focus {
 }
 .category {
   width:24%;
+  min-width: 250px;
+  max-width: 100%;
   margin-left: 1%;
   height: 200px;
+  margin-bottom: 1%;
   border-color: #CCCCCC;
   border-width: 1px;
   border-style: solid;
   display:inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 .imgAnswer {
   width: auto;

@@ -9,7 +9,6 @@
 
     <script src="js/jquery-3.1.1.min.js"></script>
     <script src="js/sql.js" charset="utf-8"></script>
-
     <script src="fuzzy-anki/c3.min.js" charset="utf-8"></script>
     <script src="fuzzy-anki/xregexp-all-min.js" charset="utf-8"></script>
     <script src="fuzzy-anki/underscore-min.js" charset="utf-8"></script>
@@ -32,10 +31,11 @@
     }, 50);
   }
 
+  /*
   function initialize() {
 
     var oReq = new XMLHttpRequest();
-    oReq.onload = this.reqListener;
+     oReq.onload = this.reqListener;
     oReq.open("get", "data/json/german-demo.json", true);
     oReq.send();
   }
@@ -43,6 +43,8 @@
   function reqListener() {
     var wordlist = JSON.parse(this.responseText);
 
+    console.log("wordlist:");
+    console.log(wordlist);
     var tags = [];
     for(var i=0;i<wordlist.length;i++) {
       if(tags.indexOf(wordlist[i].tags) === -1) {
@@ -52,7 +54,31 @@
         console.log(wordlist[i].tags);
       }
     }
-    //lw.db.loadWords(wordlist);
+    lw.db.loadWords(wordlist);
+  }
+  */
+
+  function displayLessons() {
+    var tag = "Nomen";
+    //var wordsFilteredByTag = lw.allWordsFilteredByTag(tag);
+    var wordlist = lw.db.allWords(); //lw.getLearnCards(tag);
+
+    console.log("wordlist:");
+    console.log(wordlist);
+    var arrLesson = [];
+    for(var i=0;i<wordlist.length;i++) {
+      var lesson = wordlist[i].tags.split(",")[0];
+      if(arrLesson.indexOf(lesson) === -1) {
+        arrLesson.push(lesson);
+        var categories = document.getElementById("categories");
+        //var catButton = "<div class=category>";
+        var catButton = "<figure class=category><div style='display:inline-block; height:100%; vertical-align:middle;'></div><a href=\"choose-mode.html?tag=" + lesson + "\"><img src='" + cordova.file.dataDirectory + "media/" + wordlist[i].translate +"' style='max-width:100%;max-height:100%; vertical-align:middle;'></a>";
+        catButton += "<figcaption>Lektion " + lesson + "</figcaption>";
+        catButton += "</figure>";
+        categories.innerHTML += catButton;
+      }
+    }
+    lw.db.loadWords(wordlist);
   }
 
   function fail(e) {
@@ -69,8 +95,7 @@
 
     console.log("getting ready");
     var isCordovaApp = !!window.cordova;
-
-    initialize();
+    //initialize();
 
     var HandleIntent = function (Intent) {
          console.log(Intent.data);
@@ -79,6 +104,7 @@
          if(Intent.hasOwnProperty('data')){
 
            ankiBinaryToTable(Intent.data);
+           //isplayLessons();
           // window.resolveLocalFileSystemURL(Intent.data, readFile, fail);
 
          }else{
@@ -102,6 +128,8 @@
          alert("Error: Cannot handle open with file intent");
       });
     }
+    displayLessons();
+
   }, false);
 	</script>
 </head>

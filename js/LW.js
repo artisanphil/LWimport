@@ -436,7 +436,8 @@ function BoxOfQuestions(db) {
        wordsByTag : function(wordsToFilter, tag){
 
          function hasThisTag(aWord) {
-              return (aWord.tags == tag);
+                var arrTags = aWord.tags.split(',');
+              return (arrTags.indexOf(tag) >= 0);
          }
 
          return (wordsToFilter).filter(hasThisTag);

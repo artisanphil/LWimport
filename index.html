@@ -22,7 +22,7 @@
 	  return false;
 	};
 
-  var lw = LW.BoxOfQuestions(LW.LWdb('german-family'));
+  var lw = LW.BoxOfQuestions(LW.LWdb('lw-storage'));
 
   function onLoad() {
     window.setTimeout(function() {
@@ -67,17 +67,22 @@
     console.log("wordlist:");
     console.log(wordlist);
     var arrLesson = [];
-    for(var i=0;i<wordlist.length;i++) {
-      var lesson = wordlist[i].tags.split(",")[0];
-      if(arrLesson.indexOf(lesson) === -1) {
-        arrLesson.push(lesson);
-        var categories = document.getElementById("categories");
-        //var catButton = "<div class=category>";
-        var catButton = "<figure class=category><div style='display:inline-block; height:100%; vertical-align:middle;'></div><a href=\"choose-mode.html?tag=" + lesson + "\"><img src='" + cordova.file.dataDirectory + "media/" + wordlist[i].translate +"' style='max-width:100%;max-height:100%; vertical-align:middle;'></a>";
-        catButton += "<figcaption>Lektion " + lesson + "</figcaption>";
-        catButton += "</figure>";
-        categories.innerHTML += catButton;
+    var categories = document.getElementById("categories");
+    if(wordlist.length > 0) {
+      for(var i=0;i<wordlist.length;i++) {
+        var lesson = wordlist[i].tags.split(",")[0];
+        if(arrLesson.indexOf(lesson) === -1) {
+          arrLesson.push(lesson);
+          //var catButton = "<div class=category>";
+          var catButton = "<figure class=category><div style='display:inline-block; height:100%; vertical-align:middle;'></div><a href=\"choose-mode.html?tag=" + lesson + "\"><img src='" + cordova.file.dataDirectory + "media/" + wordlist[i].translate +"' style='max-width:100%;max-height:100%; vertical-align:middle;'></a>";
+          catButton += "<figcaption>Lektion " + lesson + "</figcaption>";
+          catButton += "</figure>";
+          categories.innerHTML += catButton;
+        }
       }
+    }
+    else {
+      categories.innerText = "No cards found. Please find and open your .apkg file with LearnWords to import the lessons."
     }
     lw.db.loadWords(wordlist);
   }
@@ -140,7 +145,7 @@
 </head>
 <body onload="onLoad();">
     <div style="vertical-align:middle; height: 8%;">
-      <p style="font-weight:bold; font-size:20px; font-family:Arial;">LearnWords</p>
+      <p style="font-weight:bold; font-size:30px; font-family:Arial;">LearnWords</p>
     </div>
     <div id=categories></div>
     <div style="height:2%;"></div>

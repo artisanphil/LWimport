@@ -50,7 +50,7 @@ function loadIntoStorage(datatable, columns) {
     }
   }
 
-  var lw = LW.BoxOfQuestions(LW.LWdb('german-family'));
+  var lw = LW.BoxOfQuestions(LW.LWdb('lw-storage'));
   lw.db.loadWords(wordlist);
 
   for (var key in localStorage) {
@@ -217,6 +217,10 @@ function ankiBinaryToTable(ankiArray, callback) {
     //var compressed = new Uint8Array(ankiArray);
     //var unzip = new Zlib.Unzip(compressed);
 
+    var progressbar = document.getElementById("importProgress");
+    progressbar.style.display = "inline";
+    progressbar.max = 100;
+
     zip.unzip(ankiArray, "/sdcard/Download/unzipped/", function(x){
 
       listDir("file:///sdcard/Download/unzipped/", function(filenames ){
@@ -238,6 +242,7 @@ function ankiBinaryToTable(ankiArray, callback) {
             }
             else
             {
+              progressbar.display.style = "none";
             callback();
             }
           });

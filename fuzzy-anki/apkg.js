@@ -1,5 +1,6 @@
 var GLOBAL_CORS_PROXY = "http://cors-anywhere.herokuapp.com/";
 var ankiSeparator = '\x1f';
+var unzipDir = cordova.file.cacheDirectory + "unzipped";
 
 // deckNotes contains the contents of any APKG decks uploaded. It is an array of
 // objects with the following properties:
@@ -43,7 +44,7 @@ function loadIntoStorage(datatable, columns) {
       }
       if(x == 2)
       {
-        wordlist[i]['tags'] = datatable[i][data];
+        wordlist[i]['tags'] = datatable[i][data].trim();
       }
 
       x++;
@@ -134,7 +135,7 @@ function parseMedia(imageTable,unzip,filenames, callback2){
     var p = 0;
     for (var prop in imageTable) {
       if (filenames.indexOf(prop) >= 0) {
-        var sourceFilePath = "file:///sdcard/download/unzipped/" + prop;
+        var sourceFilePath = unzipDir + "/" + prop;
         var targetFilePath = cordova.file.dataDirectory + "media/" + imageTable[prop].replace(/[^a-zA-Z0-9.]/g, "");
         transferFile(sourceFilePath,targetFilePath, function() {
           //waiting for files to be transfered
@@ -221,21 +222,25 @@ function ankiBinaryToTable(ankiArray, callback) {
     progressbar.style.display = "inline";
     progressbar.max = 100;
 
-    zip.unzip(ankiArray, "/sdcard/Download/unzipped/", function(x){
+    console.log(ankiArray);
 
-      listDir("file:///sdcard/Download/unzipped/", function(filenames ){
+    console.log("unzip directory: " + unzipDir);
+    zip.unzip(ankiArray, unzipDir, function(x){
+
+      listDir(unzipDir, function(filenames ){
 
         if (filenames.indexOf("collection.anki2") >= 0) {
             //var plain = unzip.decompress("collection.anki2");
             //zip.unzip("/sdcard/Download/unzipped/collection.anki2", "/sdcard/Download/unzipped/collection", function(x, options){
-            getFileText("file:///sdcard/Download/unzipped/collection.anki2", "binary", function(plain) {
+            getFileText(unzipDir + "/collection.anki2", "binary", function(plain) {
             sqlToTable(plain);
 
             if (filenames.indexOf("media") >= 0) {
                 //var plainmedia = unzip.decompress("media");
-                getFileText("file:///sdcard/Download/unzipped/media", "text", function(plainmedia) {
+                getFileText(unzipDir + "/media", "text", function(plainmedia) {
                   parseMedia(JSON.parse(plainmedia),"",filenames, function() {
                     console.log("import complete");
+
                     callback();
                   });
                 });
@@ -243,6 +248,7 @@ function ankiBinaryToTable(ankiArray, callback) {
             else
             {
               progressbar.display.style = "none";
+
             callback();
             }
           });
@@ -1305,6 +1311,12 @@ function specialDisplayHandlers() {
         }
     }
     return 0;
+}
+
+if (typeof String.prototype.endsWith !== 'function') {
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
 }
 
 var summer = function(arr) {

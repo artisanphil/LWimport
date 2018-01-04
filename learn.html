@@ -101,7 +101,14 @@ var LWgui = {
                 var mediaPath = LW.Utils.getMediaPath(questionObj.importedFromAPKG);
 
                   arrOptionButtons[i].style.visibility = "visible";
-  	    		      arrOptionButtons[i].innerHTML = '<img class=imgAnswer src="' + mediaPath + questionObj.translate + '">'; //arrOptions[i]['translate'];
+                  if(questionObj.translateIsImage) {
+                    var card = "<img class=imgAnswer src='" + mediaPath + questionObj.translate +"'>";
+                  }
+                  else {
+                    var card = "<span class=answerText>" + questionObj.translate + "</span>";
+                  }
+
+  	    		      arrOptionButtons[i].innerHTML = card; //'<img class=imgAnswer src="' + mediaPath + questionObj.translate + '">';
   	    		      arrOptionButtons[i].id = w; //questionObj._id;
             }
             else {

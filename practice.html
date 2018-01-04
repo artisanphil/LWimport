@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   	<link href="css/styles.css" rel="stylesheet">
       <script type="text/javascript" src="cordova.js"></script>
+
 	<script type="text/javascript">
 	window.onerror = function(errorMsg, url, lineNumber) {
 	  "use strict";
@@ -96,7 +97,14 @@ var LWgui = {
             {
               var mediaPathImg = LW.Utils.getMediaPath(arrOptions[i]['importedFromAPKG']);
 
-  		    		arrOptionButtons[i].innerHTML = '<img class=imgAnswer src="' + mediaPathImg + arrOptions[i]['translate'] + '">'; //arrOptions[i]['translate'];
+              if(arrOptions[i]['translateIsImage']) {
+                var card = "<img class=imgAnswer src='" + mediaPathImg + arrOptions[i]['translate'] +"'>";
+              }
+              else {
+                var card = "<span class=answerText>" + arrOptions[i]['translate'] + "</span>";
+              }
+
+  		    		arrOptionButtons[i].innerHTML = card; //'<img class=imgAnswer src="' + mediaPathImg + arrOptions[i]['translate'] + '">';
   		    		arrOptionButtons[i].id = arrOptions[i]['_id'];
               arrOptionButtons[i].style.opacity = "1";
             }
@@ -109,7 +117,13 @@ var LWgui = {
           LWarea.style.display = "none";
 
           var message = document.getElementById("message");
-          message.innerHTML = "Gut gemacht! Morgen wieder üben...";
+          var msg = "Gut gemacht! Morgen wieder üben...";
+          msg += "<br><br>";
+          msg += "<span class=answerText>" + LW.Utils.getPoints(wordsFilteredByTag) + "</span>";
+          msg += "<br><br>";
+          msg += "<img src=\"media/symbols/home.png\" onclick=\"location.href='index.html';\" style=\"max-width:50%; max-height:50%; position: fixed; left: 40%; bottom: 0px;\">";
+
+          message.innerHTML = msg;
           message.style.display = "block";
 
 	    	}
@@ -136,7 +150,7 @@ var LWgui = {
           else {
               myButton.classList.add("wrong");
 
-              ////lw.moveQuestionBackwards();
+              lw.moveQuestionBackwards();
           }
           setTimeout(function(){
             if(correct)

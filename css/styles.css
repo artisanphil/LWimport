@@ -7,12 +7,17 @@ article {height: 100%;}
 button:focus {
   outline: none;
 }
+.answerText {
+  font-size: calc((10vw + 10vh) / 2);
+  color: darkblue;
+}
 .category {
   width:24%;
   min-width: 250px;
   max-width: 100%;
   margin-left: 1%;
   height: 200px;
+  line-height: 200px;
   margin-bottom: 1%;
   border-color: #CCCCCC;
   border-width: 1px;
@@ -23,6 +28,20 @@ button:focus {
   margin-left: 5px;
   margin-top: 10px;
   margin-bottom: 10px;
+}
+.category div {
+  height: 210px;
+  display:inline-block;
+  vertical-align: middle;
+}
+.category img {
+  vertical-align: middle;
+  max-width:100%;
+  max-height:100%;
+  padding: 10px;
+}
+.category figcaption {
+  line-height: 0px;
 }
 .imgAnswer {
   width: auto;

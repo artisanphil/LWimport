@@ -12,15 +12,6 @@ var deckNotes;
 
 function loadIntoStorage(datatable, columns) {
 
-  //replace Anki [sound:x.mp3] tag with HTML <audio> tag for all cards
-  for (i in datatable) {
-    for(x in datatable[i]) {
-      //datatable[i][x] = datatable[i][x].replace(/\[sound:(.*?)\]/g, '<audio controls src="$1" />');
-      datatable[i][x] = datatable[i][x].replace(/\[sound:(.*?)\]/g, '$1');
-      datatable[i][x] = datatable[i][x].replace(/<img[^>]+src="?([^"]+)"?\s*\/>/g, '$1');
-    }
-  }
-
   var wordlist = new Array();
   var id = 11;
   for (i in datatable) {
@@ -30,24 +21,32 @@ function loadIntoStorage(datatable, columns) {
     wordlist[i]['step'] = -1;
     wordlist[i]['importedFromAPKG'] = 1;
 
-    var x = 0;
     for(data in datatable[i]) {
 
-      if(x == 0)
+      if(data == "Front")
       {
         //alert(datatable[i][data]);
-        wordlist[i]['word'] = datatable[i][data].normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
+        var word = datatable[i][data].replace(/\[sound:(.*?)\]/g, '$1');
+        wordlist[i]['word'] = word.normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
       }
-      if(x == 1)
+      if(data == "Back")
       {
-        wordlist[i]['translate'] = datatable[i][data].normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
+        if(/<img[^>]+src="?([^"]+)"?\s*\/>/.test(datatable[i][data])) {
+          var translate = datatable[i][data].replace(/<img[^>]+src="?([^"]+)"?\s*\/>/g, '$1');
+          wordlist[i]['translateIsImage'] = true;
+        }
+        else {
+          wordlist[i]['translateIsImage'] = false;
+          var translate = datatable[i][data];
+        }
+
+        wordlist[i]['translate'] = translate.normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
       }
-      if(x == 2)
+      if(data == "tags")
       {
         wordlist[i]['tags'] = datatable[i][data].trim();
       }
 
-      x++;
     }
   }
 

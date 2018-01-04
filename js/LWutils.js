@@ -71,6 +71,20 @@ if(typeof(LW.Utils) == 'undefined' || LW.Utils == null || !LW.Utils){
 		    if (!results[2]) return '';
 		    return decodeURIComponent(results[2].replace(/\+/g, " "));
 		},
+		getPoints : function(mywords) {
+			console.log("get points:");
+			console.log(mywords);
+			var points = 0;
+			for(var p = 0; p < mywords.length; p++)
+			{
+				console.log(mywords[p]['step']);
+				if(mywords[p]['step'] == 1)
+				{
+					points++;
+				}
+			}
+			return points;
+		},
         delay: 0     //    Utils.delay = 24h * 60m * 60s * 100μs
 	};
 }

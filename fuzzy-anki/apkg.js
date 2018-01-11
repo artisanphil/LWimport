@@ -1,6 +1,6 @@
 var GLOBAL_CORS_PROXY = "http://cors-anywhere.herokuapp.com/";
 var ankiSeparator = '\x1f';
-var unzipDir = cordova.file.cacheDirectory + "unzipped";
+var unzipDir;
 
 // deckNotes contains the contents of any APKG decks uploaded. It is an array of
 // objects with the following properties:
@@ -18,7 +18,7 @@ function loadIntoStorage(datatable, columns) {
     wordlist[i] = {};
     wordlist[i]['_id'] = +id + +i;
     wordlist[i]['date'] = 0;
-    wordlist[i]['step'] = -1;
+    wordlist[i]['step'] = 0;
     wordlist[i]['importedFromAPKG'] = 1;
 
     for(data in datatable[i]) {
@@ -141,7 +141,6 @@ function parseMedia(imageTable,unzip,filenames, callback2){
           p++;
           progressbar.value = p;
 
-          console.log("p: " + p);
           if(p == (filenames.length - 2))
           {
             progressbar.style.display = "none";
@@ -221,8 +220,9 @@ function ankiBinaryToTable(ankiArray, callback) {
     progressbar.style.display = "inline";
     progressbar.max = 100;
 
-    console.log(ankiArray);
+    //console.log(ankiArray);
 
+    unzipDir = cordova.file.cacheDirectory + "unzipped";
     console.log("unzip directory: " + unzipDir);
     zip.unzip(ankiArray, unzipDir, function(x){
 
@@ -232,6 +232,7 @@ function ankiBinaryToTable(ankiArray, callback) {
             //var plain = unzip.decompress("collection.anki2");
             //zip.unzip("/sdcard/Download/unzipped/collection.anki2", "/sdcard/Download/unzipped/collection", function(x, options){
             getFileText(unzipDir + "/collection.anki2", "binary", function(plain) {
+
             sqlToTable(plain);
 
             if (filenames.indexOf("media") >= 0) {

@@ -29,6 +29,17 @@
         e.initEvent("deviceready", true, false);
         document.dispatchEvent(e);
     }, 50);
+
+
+    //can be used for displaying the console log directly inside the app, useful for debugging
+    /*
+    console.log = (function (old_function, div_log) {
+        return function (text) {
+            old_function(text);
+            div_log.innerHTML += text + "<br>";
+        };
+    } (console.log.bind(console), document.getElementById("error-log")));
+    */
   }
 
   /*
@@ -68,6 +79,94 @@
     });
   }
 
+  function displayImport() {
+    /**
+     * Starter vars.
+     */
+    var fileStr = "";
+    var found = 0;
+    var index = 0;
+    var i;
+
+    /**
+     * Need cordova.file plugin.
+     * $ cordova plugin add org.apache.cordova.file
+     *
+     * To get all urls see https://github.com/apache/cordova-plugin-file/blob/master/README.md#where-to-store-files
+     *
+     */
+
+    var localURLs    = [
+      cordova.file.cacheDirectory,
+      cordova.file.applicationDirectory,
+      cordova.file.applicationStorageDirectory,
+      cordova.file.dataDirectory,
+      cordova.file.documentsDirectory,
+      cordova.file.externalApplicationStorageDirectory,
+      cordova.file.externalCacheDirectory,
+      cordova.file.externalRootDirectory,
+      cordova.file.externalDataDirectory,
+      cordova.file.sharedDirectory,
+      cordova.file.syncedDataDirectory
+    ];
+
+    function loopThroughDirectories(localURLs) {
+      for (i = 0; i < localURLs.length; i++) {
+        if (localURLs[i] === null || localURLs[i].length === 0) {
+          continue; // skip blank / non-existent paths for this platform
+        }
+        window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
+      }
+
+    }
+    /**
+     * Recursive function for file entry.
+     */
+    var addFileEntry = function (entry) {
+
+      var dirReader = entry.createReader();
+      dirReader.readEntries(
+        function (entries) {
+          var i;
+          for (i = 0; i < entries.length; i++) {
+            if (entries[i].isDirectory === true) {
+              // Recursive -- call back into this subdirectory
+              addFileEntry(entries[i]);
+            } else {
+              if(entries[i].fullPath.endsWith(".apkg"))
+              {
+                //fileStr = entries[i].fullPath;
+                var msg = "<li style=\"list-style-type:none; margin-top:5px\">";
+                msg += "<textarea type=\"input\" style=\"width:100%;\">" + entries[i].fullPath + "</textarea>";
+                msg += "<input type=\"hidden\" id=filenr" + i + " value=\"" + entries[i].nativeURL + "\">";
+                msg += "<input type=button onclick=javascript:openfile(" + i + "); value=\"Import\">";
+                msg += "</li>";
+                categories.innerHTML += msg;
+              }
+            }
+          }
+        },
+        function (error) {
+          console.error("readEntries error: " + error.code);
+        }
+      );
+    };
+
+    /**
+     * Directory error.
+     */
+    var addError = function (error) {
+      console.error("getDirectory error: " + error.code);
+    };
+
+    /**
+     * Loop through the array.
+     */
+
+    loopThroughDirectories(localURLs);
+
+  }
+
   function displayLessons() {
     var tag = "Nomen";
     //var wordsFilteredByTag = lw.allWordsFilteredByTag(tag);
@@ -101,91 +200,8 @@
       msg += "<ul>";
       categories.innerHTML = msg;
 
+      displayImport();
 
-      /**
-       * Starter vars.
-       */
-      var fileStr = "";
-      var found = 0;
-      var index = 0;
-      var i;
-
-      /**
-       * Need cordova.file plugin.
-       * $ cordova plugin add org.apache.cordova.file
-       *
-       * To get all urls see https://github.com/apache/cordova-plugin-file/blob/master/README.md#where-to-store-files
-       *
-       */
-
-      var localURLs    = [
-        cordova.file.cacheDirectory,
-        cordova.file.applicationDirectory,
-        cordova.file.applicationStorageDirectory,
-        cordova.file.dataDirectory,
-        cordova.file.documentsDirectory,
-        cordova.file.externalApplicationStorageDirectory,
-        cordova.file.externalCacheDirectory,
-        cordova.file.externalRootDirectory,
-        cordova.file.externalDataDirectory,
-        cordova.file.sharedDirectory,
-        cordova.file.syncedDataDirectory
-      ];
-
-      function loopThroughDirectories(localURLs) {
-        for (i = 0; i < localURLs.length; i++) {
-          if (localURLs[i] === null || localURLs[i].length === 0) {
-            continue; // skip blank / non-existent paths for this platform
-          }
-          window.resolveLocalFileSystemURL(localURLs[i], addFileEntry, addError);
-        }
-
-      }
-      /**
-       * Recursive function for file entry.
-       */
-      var addFileEntry = function (entry) {
-
-        var dirReader = entry.createReader();
-        dirReader.readEntries(
-          function (entries) {
-            var i;
-            for (i = 0; i < entries.length; i++) {
-              if (entries[i].isDirectory === true) {
-                // Recursive -- call back into this subdirectory
-                addFileEntry(entries[i]);
-              } else {
-                if(entries[i].fullPath.endsWith(".apkg"))
-                {
-                  //fileStr = entries[i].fullPath;
-                  var msg = "<li style=\"list-style-type:none; margin-top:5px\">";
-                  msg += "<textarea type=\"input\" style=\"width:100%;\">" + entries[i].fullPath + "</textarea>";
-                  msg += "<input type=\"hidden\" id=filenr" + i + " value=\"" + entries[i].nativeURL + "\">";
-                  msg += "<input type=button onclick=javascript:openfile(" + i + "); value=\"Import\">";
-                  msg += "</li>";
-                  categories.innerHTML += msg;
-                }
-              }
-            }
-          },
-          function (error) {
-            console.error("readEntries error: " + error.code);
-          }
-        );
-      };
-
-      /**
-       * Directory error.
-       */
-      var addError = function (error) {
-        console.error("getDirectory error: " + error.code);
-      };
-
-      /**
-       * Loop through the array.
-       */
-
-      loopThroughDirectories(localURLs);
     }
     lw.db.loadWords(wordlist);
   }
@@ -207,6 +223,10 @@
     </div>
     <div id=categories></div>
     <div style="height:2%;"></div>
-    <progress id=importProgress style="display:none;">
+    <progress id=importProgress style="display:none;"></progress>
+    <div id=error-log></div>
+    <div style="margin-top: 200px; width: 100%;">
+      <a id=importLink style="text-decoration: underline; text-align:center;" onclick="javascript:displayImport();">Import</a>
+    </div>
 </body>
 </html>

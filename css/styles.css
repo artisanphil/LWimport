@@ -37,8 +37,8 @@ button:focus {
 .category img {
   vertical-align: middle;
   max-width:100%;
-  max-height:100%;
-  padding: 10px;
+  max-height:190px;
+  padding: 10px 0px 10px 0px;
 }
 .category figcaption {
   line-height: 0px;

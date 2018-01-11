@@ -202,7 +202,7 @@ function BoxOfQuestions(db) {
             _question = wordlist[i];
             if(_question.step >= 0)
             {
-              _question.step = -1;
+              _question.step = 0;
               _question.date = 0;
               console.log("reset");
               this.db.putWord(_question);
@@ -456,6 +456,8 @@ function BoxOfQuestions(db) {
               return (arrTags.indexOf(tag) >= 0);
          }
 
+         console.log("wordsToFilter");
+         console.log(wordsToFilter);
          return (wordsToFilter).filter(hasThisTag);
        },
 
@@ -474,7 +476,7 @@ function BoxOfQuestions(db) {
 
           // the function with the condition for inclusion into the result array
           function isToBeRepeated(aWord) {
-               return (aWord.step >= lowestStep) && (todayNow >= aWord.date);
+               return (aWord.step == lowestStep) && (todayNow >= aWord.date);
           }
 
           if (_question === null || _wordsToRepeat === null ) {
@@ -485,11 +487,10 @@ function BoxOfQuestions(db) {
 
                 _wordsToRepeat = (this.db.allWords()).filter(isToBeRepeated);
 
-                console.log(_wordsToRepeat);
-
                 _sessionExpiryTimeInSeconds = (this.db.getSettings()).sessionExpiryTimeInSeconds;
                 _updateSessionInfo(_sessionExpiryTimeInSeconds);
 
+                /*
                 if (_status.sessionIsNew) {
                    // the opportunity to check if we have enough _wordsToRepeat
                    var suggestedNumberOfWordsInASession = (this.db.getSettings()).suggestedNumberOfWordsInASession;
@@ -503,7 +504,7 @@ function BoxOfQuestions(db) {
 
                    _status.sessionIsNew = false;
                 }
-
+                */
           }
 
           _wordsToRepeat = lw.wordsByTag(_wordsToRepeat, tag);
@@ -587,7 +588,7 @@ var LWdb = function(name) {
 
     var recalculateIndex = true;
 
-    var _defaultInitialStepValue = -1;
+    var _defaultInitialStepValue = 0;
 
     var _importedFromAPKG = 0;
 

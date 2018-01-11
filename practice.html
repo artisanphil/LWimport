@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-	<title>German Vocabulary - version 1</title>
+	<title>LearnWords</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   	<link href="css/styles.css" rel="stylesheet">
       <script type="text/javascript" src="cordova.js"></script>
@@ -47,6 +47,9 @@
 <script>
 var lw = LW.BoxOfQuestions(LW.LWdb('lw-storage'));
 
+var timer, lockTimer;
+var touchduration = 400; //length of time we want the user to touch before we do something
+
 var LWgui = {
 
 	    initialize: function() {
@@ -64,6 +67,7 @@ var LWgui = {
 	       if (navigator.device==undefined && !isCordovaApp) {// usage in a browser
 	             this.attachButtonEvents("click");
 	          } else { // usage in mobile device
+               this.attachButtonEvents("touchstart");
 	             this.attachButtonEvents("touchend");
 	       };
 	    },
@@ -71,10 +75,53 @@ var LWgui = {
 	    attachButtonEvents : function(eventName) {
 	    	var options = document.querySelectorAll('.optionBtn');
 	    	for(var i=0;i<options.length;i++){
-	    	  options[i].addEventListener(eventName,this.optionClick,false);
+          if(eventName == "touchstart")
+          {
+              options[i].addEventListener(eventName,this.touchstart,false);
+          }
+          else if(eventName == "touchend")
+          {
+             options[i].addEventListener(eventName,this.touchend,false);
+          }
+          else
+          {
+              //for mouse click events
+	    	      options[i].addEventListener(eventName,this.mouseclick,false);
+          }
 	    	}
         document.querySelector("#listen").addEventListener(eventName, this.listen, false);
 	    },
+
+      mouseclick : function(e) {
+        var wordID = e.currentTarget.id;
+        LWgui.optionClick(wordID);
+      },
+      touchstart : function(e) {
+        console.log("touchstart");
+      	e.preventDefault();
+      	if(lockTimer){
+      		return;
+      	}
+        var wordID = e.currentTarget.id;
+        timer = setTimeout(function () {
+          console.log("id: " + wordID);
+          LWgui.onlongtouch(wordID);
+        }, touchduration);
+      	lockTimer = true;
+      },
+
+      touchend : function() {
+        console.log("touchend");
+          //stops short touches from firing the event
+          if (timer){
+              clearTimeout(timer); // clearTimeout, not cleartimeout..
+      		lockTimer = false;
+      	}
+      },
+      onlongtouch : function(wordID) {
+        console.log("onlongtouch");
+      	LWgui.optionClick(wordID);
+      },
 
 	    showRepeat : function() {
         var tag = LW.Utils.getParameterByName("tag", window.location);
@@ -129,9 +176,9 @@ var LWgui = {
 	    	}
 
 	    },
-	    optionClick: function(clickedOption) {
+	    optionClick: function(wordID) {
 
-	    	var wordID = clickedOption.currentTarget.id;
+	    	//var wordID = clickedOption.currentTarget.id;
         var w = lw.findID(wordID);
 	    	var clickedWord = lw.getWord(w); //lw.db.getWord(wordID);
         var myButton = document.getElementById(wordID);

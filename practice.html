@@ -5,7 +5,8 @@
 	<title>LearnWords</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   	<link href="css/styles.css" rel="stylesheet">
-      <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script src="http://192.168.1.101:8080/target/target-script-min.js#anonymous"></script>
       
 	<script type="text/javascript">
 	window.onerror = function(errorMsg, url, lineNumber) {
@@ -48,14 +49,14 @@
 var lw = LW.BoxOfQuestions(LW.LWdb('lw-storage'));
 
 var timer, lockTimer;
-var touchduration = 400; //length of time we want the user to touch before we do something
+var touchduration = 150; //length of time we want the user to touch before we do something
 
 var LWgui = {
 
 	    initialize: function() {
 
         console.log("initialize practice");
-        lw.resetSteps();
+        lw.resetQueried();
 
         this.bindEvents();
         LWgui.showRepeat();
@@ -127,11 +128,11 @@ var LWgui = {
         var tag = LW.Utils.getParameterByName("tag", window.location);
         var wordsFilteredByTag = lw.allWordsFilteredByTag(tag);
 
-	    	questionObj = lw.question(tag);
+	    	questionObj = lw.question(tag, "practice");
         console.log("questionObj");
 	    	if(typeof questionObj !== 'undefined')
 	    	{
-          correctAnswer = lw.answer();
+          correctAnswer = lw.answer(tag, "practice");
 
           var mediaPathSound = LW.Utils.getMediaPath(questionObj['importedFromAPKG']);
           LW.Utils.playAudio(mediaPathSound + questionObj.word);
@@ -180,7 +181,7 @@ var LWgui = {
 
 	    	//var wordID = clickedOption.currentTarget.id;
         var w = lw.findID(wordID);
-	    	var clickedWord = lw.getWord(w); //lw.db.getWord(wordID);
+        var clickedWord = lw.getWord(w); //lw.db.getWord(wordID);
         var myButton = document.getElementById(wordID);
         //var correctButton = document.getElementById(questionObj._id);
 

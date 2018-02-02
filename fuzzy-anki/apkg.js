@@ -19,6 +19,8 @@ function loadIntoStorage(datatable, columns) {
     wordlist[i]['_id'] = +id + +i;
     wordlist[i]['date'] = 0;
     wordlist[i]['step'] = 0;
+    wordlist[i]['point'] = 0;
+    wordlist[i]['queried'] = 0;
     wordlist[i]['importedFromAPKG'] = 1;
 
     for(data in datatable[i]) {

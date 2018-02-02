@@ -77,8 +77,8 @@ if(typeof(LW.Utils) == 'undefined' || LW.Utils == null || !LW.Utils){
 			var points = 0;
 			for(var p = 0; p < mywords.length; p++)
 			{
-				console.log(mywords[p]['step']);
-				if(mywords[p]['step'] == 1)
+				console.log(mywords[p]['point']);
+				if(mywords[p]['point'] == 1)
 				{
 					points++;
 				}

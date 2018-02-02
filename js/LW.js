@@ -10,6 +10,7 @@ function BoxOfQuestions(db) {
         var _allWordsFilteredByTag = {};
 
         var _question = null; // no current question
+        var _wordsToPractice = null; 
         var _wordsToRepeat = null; // words which are eligible to be repeated.
                                    // initialisation to null forces calculation
                                    // on first call of wordsToRepeat()
@@ -146,11 +147,20 @@ function BoxOfQuestions(db) {
 
 
 
-        question : function(tag){
+        question : function(tag, mode){
             // gives back a question to ask
             if (!_question) {
                  // _question is null, go for a new one.
-                 var wds = this.wordsToRepeat(tag);
+                 console.log("mode: " + mode);
+                 if(mode == "practice")
+                 {
+                    var wds = this.wordsToPractice(tag);
+                 }
+                 else
+                 {
+                    var wds = this.wordsToRepeat(tag);
+                 }
+
                  if (wds !== null) {_question = this.chooseRandomObject(wds);}
             }
             return _question;
@@ -163,8 +173,8 @@ function BoxOfQuestions(db) {
 
 
 
-        answer :function(){
-            return (this.question()).translate;
+        answer :function(tag, mode){
+            return (this.question(tag, mode)).translate;
         },
 
 
@@ -185,28 +195,26 @@ function BoxOfQuestions(db) {
                 console.log(_question);
 
                 _question.step = 0;
-
+                _question.point = 0;
+                _question.queried = 1;
 
                 this.db.putWord(_question);
 
                 // As the question has a new later date it is no more
                 // a current question
 
-                _questionHasBeenProcessed();
+                //_questionHasBeenProcessed();
             }
         },
 
-        resetSteps : function(){
+        resetQueried : function(){
           var wordlist = this.db.allWords();
           for(var i=0;i<wordlist.length;i++) {
             _question = wordlist[i];
-            if(_question.step >= 0)
-            {
-              _question.step = 0;
-              _question.date = 0;
-              console.log("reset");
-              this.db.putWord(_question);
-            }
+            _question.queried = 0;
+            _question.point = 0;
+            console.log("reset");
+            this.db.putWord(_question);
           }
           _question = null;
         },
@@ -215,6 +223,8 @@ function BoxOfQuestions(db) {
 
 
        moveQuestionForward : function(){
+
+            console.log("moveQuestionForward");
 
             if (_question) { // we have a question
                  var s = this.db.getSettings();
@@ -229,10 +239,14 @@ function BoxOfQuestions(db) {
                 //
 
                 _question.step = _question.step + 1;
+                _question.point = _question.point + 1;
+                _question.queried = 1;
 
                 // The assumption is that long delay values for higher steps
                 // prevent an access error for
                 //     s.factorForDelayValue[stepNumber]
+
+                console.log(_question);
 
                 this.db.putWord(_question);
 
@@ -456,12 +470,28 @@ function BoxOfQuestions(db) {
               return (arrTags.indexOf(tag) >= 0);
          }
 
-         console.log("wordsToFilter");
-         console.log(wordsToFilter);
          return (wordsToFilter).filter(hasThisTag);
        },
 
+       wordsToPractice : function(tag){
 
+            var todayNow = new Date().valueOf();
+
+            function isToBePracticed(aWord) {
+                return (aWord.queried == 0);
+            }
+
+            if (_question === null || _wordsToPractice === null ) {
+                _wordsToPractice = (this.db.allWords()).filter(isToBePracticed);
+            }
+
+            _wordsToPractice = lw.wordsByTag(_wordsToPractice, tag);
+
+            console.log("words to practice:");
+            console.log(_wordsToPractice);
+  
+            return _wordsToPractice;
+        },
 
        wordsToRepeat : function(tag){
 

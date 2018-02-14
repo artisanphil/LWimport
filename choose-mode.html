@@ -15,20 +15,19 @@
   window.onload = function(){
     var tag = LW.Utils.getParameterByName("tag", window.location)
     document.getElementById('learnButton').setAttribute('onclick', "location.href='learn.html?tag=" + tag + "'");
-    document.getElementById('practiceButton').setAttribute('onclick', "location.href='practice.html?tag=" + tag + "'");
+    document.getElementById('practiceButton').setAttribute('onclick', "location.href='practice.html?tag=" + tag + "&mode=practice'");
   }
   </script>
-    <div style="height: 40%;">
+  <div id=chooseButtons>
+    <div>
       <button id=learnButton class="optionBtn" name="learn" style="max-width:400px;"><img src="media/symbols/learn.png" style="max-width:100%; max-height: 100%;"></button>
     </div>
-    <div style="height:2%;"></div>
-    <div style="height: 40%;">
+    <div>
       <button id=practiceButton class="optionBtn" name="practice" style="max-width:400px;"><img src="media/symbols/practice.png" style="max-width:100%; max-height: 100%;"></button>
     </div>
-    <div style="height:2%;"></div>
-    <div style="height: 15%;">
-      <img src="media/symbols/home.png" onclick="location.href='index.html';" style="max-width:100%; max-height:100%;">
+    <div>
+      <img id=home src="media/symbols/home.png" onclick="location.href='index.html';" style="max-width:100%; max-height:100%;">
     </div>
-    <div style="height:2%;"></div>
+  </div>
 </body>
 </html>

@@ -25,6 +25,8 @@
   var lw = LW.BoxOfQuestions(LW.LWdb('lw-storage'));
 
   function onLoad() {
+    document.getElementById('reviewButton').setAttribute('onclick', "location.href='practice.html?mode=review'");
+    
     window.setTimeout(function() {
         var e = document.createEvent('Events');
         e.initEvent("deviceready", true, false);
@@ -140,7 +142,7 @@
                 var msg = "<li style=\"list-style-type:none; margin-top:5px\">";
                 msg += "<textarea type=\"input\" style=\"width:100%;\">" + entries[i].fullPath + "</textarea>";
                 msg += "<input type=\"hidden\" id=filenr" + i + " value=\"" + entries[i].nativeURL + "\">";
-                msg += "<input type=button onclick=javascript:openfile(" + i + "); value=\"Import\">";
+                msg += "<input type=button class=importButton onclick=javascript:openfile(" + i + "); value=\"Import\">";
                 msg += "</li>";
                 categories.innerHTML += msg;
               }
@@ -178,6 +180,10 @@
     var arrLesson = [];
     var categories = document.getElementById("categories");
     if(wordlist.length > 0) {
+      
+      var reviewButton = document.getElementById("reviewButton");
+      reviewButton.style.display = "inline";
+      
       for(var i=0;i<wordlist.length;i++) {
         var lesson = wordlist[i].tags.split(",")[0];
         if(arrLesson.indexOf(lesson) === -1) {
@@ -223,6 +229,10 @@
       <p style="font-weight:bold; font-size:30px; font-family:Arial;">LearnWords</p>
     </div>
     <div id=categories></div>
+    <div style="height:5%;"></div>
+    <div>
+      <button id=reviewButton class="category" name="review" style="max-width:400px; display: none;"><img src="media/symbols/review.png" style="padding: 0px;"></button>
+    </div>
     <div style="height:2%;"></div>
     <progress id=importProgress style="display:none;"></progress>
     <div id=error-log></div>

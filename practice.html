@@ -47,7 +47,7 @@
 <script src="js/flowtype.js"></script>
 <script>
 var lw = LW.BoxOfQuestions(LW.LWdb('lw-storage'));
-
+var tag, mode;
 var timer, lockTimer;
 var touchduration = 150; //length of time we want the user to touch before we do something
 
@@ -55,8 +55,14 @@ var LWgui = {
 
 	    initialize: function() {
 
+        tag = LW.Utils.getParameterByName("tag", window.location);
+        mode = LW.Utils.getParameterByName("mode", window.location);
+        
         console.log("initialize practice");
-        lw.resetQueried();
+        if(mode == "practice")
+        {
+          lw.resetQueried();
+        }
 
         this.bindEvents();
         LWgui.showRepeat();
@@ -125,14 +131,13 @@ var LWgui = {
       },
 
 	    showRepeat : function() {
-        var tag = LW.Utils.getParameterByName("tag", window.location);
         var wordsFilteredByTag = lw.allWordsFilteredByTag(tag);
 
-	    	questionObj = lw.question(tag, "practice");
+	    	questionObj = lw.question(tag, mode);
         console.log("questionObj");
 	    	if(typeof questionObj !== 'undefined')
 	    	{
-          correctAnswer = lw.answer(tag, "practice");
+          correctAnswer = lw.answer(tag, mode);
 
           var mediaPathSound = LW.Utils.getMediaPath(questionObj['importedFromAPKG']);
           LW.Utils.playAudio(mediaPathSound + questionObj.word);

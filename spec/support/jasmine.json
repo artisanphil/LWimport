@@ -7,6 +7,6 @@
   	"jasmine-expect/index.js",
     "helpers/**/*.js"
   ],
-  "stopSpecOnExpectationFailure": false,
-  "random": true
+  "stopSpecOnExpectationFailure": true,
+  "random": false
 }

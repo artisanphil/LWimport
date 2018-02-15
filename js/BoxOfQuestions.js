@@ -277,8 +277,6 @@ function BoxOfQuestions(db) {
 				_allWordsFilteredByTag = this.wordsByTag(this.db.allWords(), tag);
 			}
 
-			console.log("allWordsFilteredByTag");
-
 			return _allWordsFilteredByTag;
 		},
 

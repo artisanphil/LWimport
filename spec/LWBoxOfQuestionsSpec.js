@@ -7,7 +7,7 @@ const reporter = new JasmineConsoleReporter({
 	listStyle: 'indent', // "flat"|"indent" 
 	activity: false
 });
-  
+ 
 var BoxOfQuestions = require('../js/BoxOfQuestions');
 var LWdb = require('../js/LWdb');
 
@@ -167,7 +167,7 @@ beforeAll(function(){
 		}else{
 			// running in browser
 			var req = new XMLHttpRequest();
-			req.open('GET','/data/json/wordlist-en-ge.json',true);
+			req.open('GET','/data/json/wordlist-en-ge.json');
 			req.addEventListener("load",function(){
 				try{
 					var data = JSON.parse(this.responseText);
@@ -208,8 +208,6 @@ describe("BoxOfQuestions", function() {
 		var allWords = lw.db.allWords();
 		lw.allWordsFilteredByTag();
 		
-		console.log("allWords[0]");
-		console.log(allWords[0]);
 		allWords[0].step = 0;  // question for word has not been answered yet 
 		allWords[1].step = 0;
 		allWords[2].step = 0;

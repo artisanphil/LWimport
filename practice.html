@@ -41,12 +41,13 @@
 <div id=message style="display:none;"></div>
 </article>
 
-<script src="js/LW.js"></script>
+<script src="js/BoxOfQuestions.js"></script>
+<script src="js/LWdb.js"></script>
 <script src="js/LWutils.js"></script>
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/flowtype.js"></script>
 <script>
-var lw = LW.BoxOfQuestions(LW.LWdb('lw-storage'));
+var lw = BoxOfQuestions(LWdb('lw-storage'));
 var tag, mode;
 var timer, lockTimer;
 var touchduration = 150; //length of time we want the user to touch before we do something
@@ -55,14 +56,14 @@ var LWgui = {
 
 	    initialize: function() {
 
-        tag = LW.Utils.getParameterByName("tag", window.location);
-        mode = LW.Utils.getParameterByName("mode", window.location);
+        tag = LWutils.getParameterByName("tag", window.location);
+        mode = LWutils.getParameterByName("mode", window.location);
         
         console.log("initialize practice");
-        if(mode == "practice")
-        {
+        //if(mode == "practice")
+        //{
           lw.resetQueried();
-        }
+        //}
 
         this.bindEvents();
         LWgui.showRepeat();
@@ -139,8 +140,8 @@ var LWgui = {
 	    	{
           correctAnswer = lw.answer(tag, mode);
 
-          var mediaPathSound = LW.Utils.getMediaPath(questionObj['importedFromAPKG']);
-          LW.Utils.playAudio(mediaPathSound + questionObj.word);
+          var mediaPathSound = LWutils.getMediaPath(questionObj['importedFromAPKG']);
+          LWutils.playAudio(mediaPathSound + questionObj.word);
 
 		    	var arrOptionButtons = document.getElementsByClassName("optionBtn");
 		    	var arrOptions = lw.getAnswerOptions(tag);
@@ -148,7 +149,7 @@ var LWgui = {
 
             if(arrOptions[i])
             {
-              var mediaPathImg = LW.Utils.getMediaPath(arrOptions[i]['importedFromAPKG']);
+              var mediaPathImg = LWutils.getMediaPath(arrOptions[i]['importedFromAPKG']);
 
               if(arrOptions[i]['translateIsImage']) {
                 var card = "<img class=imgAnswer src='" + mediaPathImg + arrOptions[i]['translate'] +"'>";
@@ -172,7 +173,7 @@ var LWgui = {
           var message = document.getElementById("message");
           var msg = "Gut gemacht! Morgen wieder üben...";
           msg += "<br><br>";
-          msg += "<span class=answerText>" + LW.Utils.getPoints(wordsFilteredByTag) + "</span>";
+          msg += "<span class=answerText>" + LWutils.getPoints(wordsFilteredByTag) + "</span>";
           msg += "<br><br>";
           msg += "<img src=\"media/symbols/home.png\" onclick=\"location.href='index.html';\" style=\"max-width:50%; max-height:50%; position: fixed; left: 40%; bottom: 0px;\">";
 
@@ -221,8 +222,8 @@ var LWgui = {
     },
     listen : function()
     {
-      var mediaPath = LW.Utils.getMediaPath(questionObj['importedFromAPKG']);
-      LW.Utils.playAudio(mediaPath + questionObj['word']);
+      var mediaPath = LWutils.getMediaPath(questionObj['importedFromAPKG']);
+      LWutils.playAudio(mediaPath + questionObj['word']);
       console.log("data/media/" + questionObj['word']);
     },
 };

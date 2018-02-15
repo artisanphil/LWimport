@@ -527,7 +527,6 @@ function BoxOfQuestions(db) {
 					// the opportunity to check if we have enough _wordsToReview
 					var suggestedNumberOfWordsInASession = (this.db.getSettings()).suggestedNumberOfWordsInASession;
 
-					console.log("WordsToReview: " + _wordsToReview.length + " suggested: " + suggestedNumberOfWordsInASession);
 					if (_wordsToReview.length < suggestedNumberOfWordsInASession) {
 						// we need to
 						this.addMoreWordsForLearning(suggestedNumberOfWordsInASession - _wordsToReview.length);
@@ -574,5 +573,7 @@ function BoxOfQuestions(db) {
 
 
 }
-
-module.exports = BoxOfQuestions;
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') 
+{
+	module.exports = BoxOfQuestions;
+}

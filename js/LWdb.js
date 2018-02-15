@@ -353,5 +353,7 @@ var LWdb = function(name) {
 
 }; // end of LWdb function definition
 
-
-module.exports = LWdb;
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') 
+{
+	module.exports = LWdb;
+}

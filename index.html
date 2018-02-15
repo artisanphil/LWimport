@@ -14,7 +14,8 @@
     <script src="fuzzy-anki/xregexp-all-min.js" charset="utf-8"></script>
     <script src="fuzzy-anki/underscore-min.js" charset="utf-8"></script>
     <script src="fuzzy-anki/apkg.js" charset="utf-8"></script>
-    <script src="js/LW.js"></script>
+    <script src="js/BoxOfQuestions.js"></script>
+    <script src="js/LWdb.js"></script>
 	<script type="text/javascript">
 	window.onerror = function(errorMsg, url, lineNumber) {
 	  "use strict";
@@ -22,7 +23,7 @@
 	  return false;
 	};
 
-  var lw = LW.BoxOfQuestions(LW.LWdb('lw-storage'));
+  var lw = BoxOfQuestions(LWdb('lw-storage'));
 
   function onLoad() {
     document.getElementById('reviewButton').setAttribute('onclick', "location.href='practice.html?mode=review'");
@@ -196,7 +197,7 @@
             var lessonContentSample = "<span class=answerText>" + wordlist[i].translate + "</span>";
           }
           var catButton = "<a href=\"choose-mode.html?tag=" + lesson + "\" style=\"underline: none;\"><figure class=category><div>" + lessonContentSample + "</div>";
-          catButton += "<figcaption>Lektion " + lesson + "</figcaption>";
+          catButton += "<figcaption>" + lesson + "</figcaption>";
           catButton += "</figure></a>";
           categories.innerHTML += catButton;
         }

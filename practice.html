@@ -6,7 +6,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   	<link href="css/styles.css" rel="stylesheet">
     <script type="text/javascript" src="cordova.js"></script>
-    <script src="http://192.168.1.101:8080/target/target-script-min.js#anonymous"></script>
       
 	<script type="text/javascript">
 	window.onerror = function(errorMsg, url, lineNumber) {
@@ -60,10 +59,10 @@ var LWgui = {
         mode = LWutils.getParameterByName("mode", window.location);
         
         console.log("initialize practice");
-        //if(mode == "practice")
-        //{
+        if(mode == "practice")
+        {
           lw.resetQueried();
-        //}
+        }
 
         this.bindEvents();
         LWgui.showRepeat();
@@ -167,19 +166,25 @@ var LWgui = {
 	    	}
 	    	else
 	    	{
-          var LWarea = document.getElementById("learnWords2-area");
-          LWarea.style.display = "none";
+          if(mode == "practice")
+          {
+            location.href='practice.html?tag=' + tag + '&mode=practiceagain';
+          }
+          else
+          {
+            var LWarea = document.getElementById("learnWords2-area");
+            LWarea.style.display = "none";
 
-          var message = document.getElementById("message");
-          var msg = "Gut gemacht! Morgen wieder üben...";
-          msg += "<br><br>";
-          msg += "<span class=answerText>" + LWutils.getPoints(wordsFilteredByTag) + "</span>";
-          msg += "<br><br>";
-          msg += "<img src=\"media/symbols/home.png\" onclick=\"location.href='index.html';\" style=\"max-width:50%; max-height:50%; position: fixed; left: 40%; bottom: 0px;\">";
+            var message = document.getElementById("message");
+            var msg = "Gut gemacht! Morgen wieder üben...";
+            msg += "<br><br>";
+            msg += "<span class=answerText>" + LWutils.getPoints(wordsFilteredByTag) + "</span>";
+            msg += "<br><br>";
+            msg += "<img src=\"media/symbols/home.png\" onclick=\"location.href='index.html';\" style=\"max-width:50%; max-height:50%; position: fixed; left: 40%; bottom: 0px;\">";
 
-          message.innerHTML = msg;
-          message.style.display = "block";
-
+            message.innerHTML = msg;
+            message.style.display = "block";
+          }
 	    	}
 
 	    },

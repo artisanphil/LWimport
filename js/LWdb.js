@@ -315,7 +315,7 @@ var LWdb = function(name) {
 				// define default value for settings
 				value = { "delay": 8640000,
 					"numberOfOptions": 4,
-					"factorForDelayValue": [1,1,3,7,45,90,360,1000],
+					"factorForDelayValue": [1,2,3,7,45,90,360,1000],
 					"defaultInitialStepValue" : _defaultInitialStepValue,
 					"sessionExpiryTimeInSeconds" : 1800,
 					"suggestedNumberOfWordsInASession" : 20,

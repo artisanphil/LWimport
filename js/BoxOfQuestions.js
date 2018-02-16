@@ -149,7 +149,11 @@ function BoxOfQuestions(db) {
 				// _question is null, go for a new one.
 				if(mode == "practice")
 				{
-					var wds = this.wordsToPractice(tag);
+					var wds = this.wordsToPractice(tag, false);
+				}
+				else if(mode == "practiceagain")
+				{
+					var wds = this.wordsToPractice(tag, true);
 				}
 				else
 				{
@@ -225,18 +229,26 @@ function BoxOfQuestions(db) {
 			if (_question) { // we have a question
 				var s = this.db.getSettings();
 
-				// calculate new date. This depends on which step the question is.
-				// And the delay calculation factor for that particular step.
-				_question.date = new Date().valueOf() +
-                                 s.delay * s.factorForDelayValue[_question.step];
-
 				// With repeated calls to this method
 				// the following will move the question up.
 				//
 
 				_question.step = _question.step + 1;
-				_question.point = _question.point + 1;
-				_question.queried = 1;
+				//if already queried, we don't give anymore points
+				if(_question.queried == 0)
+				{
+					_question.point = _question.point + 1;
+				}
+				if(_question.queried >= 1 && _question.point == 0)
+				{
+					_question.step = 0;
+				}
+				_question.queried = _question.queried + 1;
+
+				// calculate new date. This depends on which step the question is.
+				// And the delay calculation factor for that particular step.
+				_question.date = new Date().valueOf() +
+                                 s.delay * s.factorForDelayValue[_question.step];
 
 				// The assumption is that long delay values for higher steps
 				// prevent an access error for
@@ -475,19 +487,27 @@ function BoxOfQuestions(db) {
 			return (wordsToFilter).filter(hasThisTag);
 		},
 
-		wordsToPractice : function(tag){
+		wordsToPractice : function(tag, again){
 
 			var todayNow = new Date().valueOf();
 
 			function isToBePracticed(aWord) {
-				return (aWord.queried == 0);
+				if(again == true)
+				{
+					console.log("return to be practiced again");
+					return (aWord.queried == 1 && aWord.point == 0);
+				}
+				else
+				{
+					return (aWord.queried == 0);
+				}
 			}
 
 			if (_question === null || _wordsToPractice === null ) {
-				_wordsToPractice = (this.db.allWords()).filter(isToBePracticed);
+				_wordsToPractice = (this.db.allWords()).filter(isToBePracticed, again);
 			}
 
-			_wordsToPractice = lw.wordsByTag(_wordsToPractice, tag);
+			_wordsToPractice = this.wordsByTag(_wordsToPractice, tag);
 
 			console.log("words to practice:");
 			console.log(_wordsToPractice);

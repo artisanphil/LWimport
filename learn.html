@@ -36,12 +36,13 @@
 <div id=message style="display:none;"></div>
 </article>
 
-<script src="js/LW.js"></script>
+<script src="js/BoxOfQuestions.js"></script>
+<script src="js/LWdb.js"></script>
 <script src="js/LWutils.js"></script>
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/flowtype.js"></script>
 <script>
-var lw = LW.BoxOfQuestions(LW.LWdb('lw-storage'));
+var lw = BoxOfQuestions(LWdb('lw-storage'));
 
 var wordNumber = 1;
 
@@ -72,7 +73,7 @@ var LWgui = {
 
 	    showRepeat : function() {
 
-          var tag = LW.Utils.getParameterByName("tag", window.location);
+          var tag = LWutils.getParameterByName("tag", window.location);
 
           document.getElementById('back').setAttribute('onclick', "LWgui.back('" + tag + "');");
           var wordsFilteredByTag = lw.allWordsFilteredByTag(tag);
@@ -98,7 +99,7 @@ var LWgui = {
             var questionObj = lw.getWord(w);
             if(questionObj != null)
             {
-                var mediaPath = LW.Utils.getMediaPath(questionObj.importedFromAPKG);
+                var mediaPath = LWutils.getMediaPath(questionObj.importedFromAPKG);
 
                   arrOptionButtons[i].style.visibility = "visible";
                   if(questionObj.translateIsImage) {
@@ -149,9 +150,9 @@ var LWgui = {
       var wordID = clickedOption.currentTarget.id;
       var clickedWord = lw.getWord(wordID);
 
-      var mediaPath = LW.Utils.getMediaPath(clickedWord.importedFromAPKG);
+      var mediaPath = LWutils.getMediaPath(clickedWord.importedFromAPKG);
 
-      LW.Utils.playAudio(mediaPath + clickedWord.word);
+      LWutils.playAudio(mediaPath + clickedWord.word);
     },
 };
 

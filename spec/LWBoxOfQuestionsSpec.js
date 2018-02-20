@@ -209,14 +209,22 @@ describe("BoxOfQuestions", function() {
 		lw.allWordsFilteredByTag();
 		
 		allWords[0].step = 0;  // question for word has not been answered yet 
+		allWords[0].queried = 1;
 		allWords[1].step = 0;
+		allWords[1].queried = 1;
 		allWords[2].step = 0;
+		allWords[2].queried = 1;
 
 		allWords[3].step = 1;  // question for word has been answered once
+		allWords[3].queried = 1;
 		allWords[4].step = 1;  
+		allWords[4].queried = 1;
 		allWords[5].step = 1;
+		allWords[5].queried = 1;
 		allWords[6].step = 2;  // word has been answered two times
+		allWords[6].queried = 1;
 		allWords[7].step = 3;  // word has been answered three times
+		allWords[7].queried = 1;
 
 		lw.db.putWord(allWords[0]);
 		lw.db.putWord(allWords[1]);

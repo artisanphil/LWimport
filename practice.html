@@ -143,7 +143,7 @@ var LWgui = {
           LWutils.playAudio(mediaPathSound + questionObj.word);
 
 		    	var arrOptionButtons = document.getElementsByClassName("optionBtn");
-		    	var arrOptions = lw.getAnswerOptions(tag);
+		    	var arrOptions = lw.getAnswerOptions(tag, mode);
 		    	for (var i = 0; i < arrOptionButtons.length; i++) {
 
             if(arrOptions[i])
@@ -176,9 +176,18 @@ var LWgui = {
             LWarea.style.display = "none";
 
             var message = document.getElementById("message");
-            var msg = "Gut gemacht! Morgen wieder üben...";
-            msg += "<br><br>";
-            msg += "<span class=answerText>" + LWutils.getPoints(wordsFilteredByTag) + "</span>";
+            var msg = "";
+            if(mode == "review")
+            {
+              msg += "<div style=\"height:100%; vertical-align:center;\">";
+              msg += "<img src=\"media/symbols/finished.png\">";
+              msg += "</div>";
+            }
+            else
+            {
+              msg += "<br><br>";
+              msg += "<span class=answerText>" + LWutils.getPoints(wordsFilteredByTag) + "</span>";
+            }
             msg += "<br><br>";
             msg += "<img src=\"media/symbols/home.png\" onclick=\"location.href='index.html';\" style=\"max-width:50%; max-height:50%; position: fixed; left: 40%; bottom: 0px;\">";
 

@@ -363,7 +363,7 @@ function BoxOfQuestions(db) {
 		},
 
 
-		getAnswerOptions : function(tag){
+		getAnswerOptions : function(tag, mode){
 			// simple implementation : choose from all available words
 			// As we use ECMA5script findIndex is not available.
 			// We have to duplicate the effort in keeping an array of id
@@ -376,7 +376,7 @@ function BoxOfQuestions(db) {
 
 			if (db.numberOfWords() >= n) {
 
-				var q = this.question(tag);
+				var q = this.question(tag, mode);
 				options.push(q);
 
   	           var idsOfOptions = [];
@@ -519,7 +519,7 @@ function BoxOfQuestions(db) {
 
 			// calculate the array with words which are to be learned/repeated during a sessio
 
-			// all words with step value 0 and above are considered.
+			// all words with step value 1 and above are considered.
 			var lowestStep = 0;
 
 			// words with a date value >= todayNow are considered
@@ -528,7 +528,7 @@ function BoxOfQuestions(db) {
 
 			// the function with the condition for inclusion into the result array
 			function isToBeReviewed(aWord) {
-				return (aWord.step >= lowestStep) && (todayNow >= aWord.date);
+				return (aWord.queried >= 1) && (aWord.step >= lowestStep) && (todayNow >= aWord.date);
 			}
 
 			if (_question === null || _wordsToReview === null ) {

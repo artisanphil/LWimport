@@ -379,8 +379,13 @@ function BoxOfQuestions(db) {
 				var q = this.question(tag, mode);
 				options.push(q);
 
-  	           var idsOfOptions = [];
+				var idsOfOptions = [];
+				var samePronunciations = [];
+
 				idsOfOptions.push(q._id);
+				if(q.pronunciation.trim().length > 0){
+					samePronunciations.push(q.pronunciation.trim().toLowerCase());
+				}
 
 				var anOption;
 				// var allWords =  this.db.allWords();
@@ -389,14 +394,20 @@ function BoxOfQuestions(db) {
 				do {
 					// choose option from all words.
 					anOption = this.chooseRandomObject(_allWordsFilteredByTag);
-                  
-					if (idsOfOptions.indexOf(anOption._id) == -1) {
+
+					if (idsOfOptions.indexOf(anOption._id) == -1 && samePronunciations.indexOf(anOption.pronunciation.trim().toLowerCase()) == -1) {
 						// the new option is not included yet
-  			                  idsOfOptions.push(anOption._id);
+						idsOfOptions.push(anOption._id);
+
+						if(anOption.pronunciation.trim().length > 0){
+							samePronunciations.push(anOption.pronunciation.trim().toLowerCase());
+						}
+									
 						options.push(anOption);
 					}
 					else {
 						countTries++;
+						console.log("countTried: " + countTries);
 						if(countTries >= 10)
 						{
 							//no other answer possiblities exist, so exit

@@ -383,8 +383,10 @@ function BoxOfQuestions(db) {
 				var samePronunciations = [];
 
 				idsOfOptions.push(q._id);
-				if(q.pronunciation.trim().length > 0){
-					samePronunciations.push(q.pronunciation.trim().toLowerCase());
+				if(q.pronunciation){
+					if(q.pronunciation.trim().length > 0){
+						samePronunciations.push(q.pronunciation.trim().toLowerCase());
+					}
 				}
 
 				var anOption;
@@ -395,12 +397,24 @@ function BoxOfQuestions(db) {
 					// choose option from all words.
 					anOption = this.chooseRandomObject(_allWordsFilteredByTag);
 
-					if (idsOfOptions.indexOf(anOption._id) == -1 && samePronunciations.indexOf(anOption.pronunciation.trim().toLowerCase()) == -1) {
+					var answerPossible = false;
+					if(idsOfOptions.indexOf(anOption._id) == -1){
+						answerPossible = true;
+					}
+					if(anOption.pronunciation) {
+						if(samePronunciations.indexOf(anOption.pronunciation.trim().toLowerCase()) >= 0) {
+							answerPossible = false;
+						}
+					}
+
+					if (answerPossible) {
 						// the new option is not included yet
 						idsOfOptions.push(anOption._id);
 
-						if(anOption.pronunciation.trim().length > 0){
-							samePronunciations.push(anOption.pronunciation.trim().toLowerCase());
+						if(anOption.pronunciation) {
+							if(anOption.pronunciation.trim().length > 0){
+								samePronunciations.push(anOption.pronunciation.trim().toLowerCase());
+							}
 						}
 									
 						options.push(anOption);

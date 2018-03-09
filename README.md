@@ -7,12 +7,16 @@ Fork the repository, then
     cd LWimport
     npm install 
 
-# Jasmin tests
+# Run tests
 From the console run
 
-     jasmine
+    npm test
+
+or just
+
+    jasmine
      
-This executes the tests given in the ``spec`` folder.
+This executes the [``jasmine``](https://jasmine.github.io/) tests given in the ``spec`` folder.
 
 A typical result is
 

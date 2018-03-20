@@ -29,7 +29,8 @@ function loadIntoStorage(datatable, columns) {
 			{
 				//alert(datatable[i][data]);
 				var word = datatable[i][data].replace(/\[sound:(.*?)\]/g, '$1');
-				wordlist[i]['word'] = word.normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
+				var wordNormalized = word.normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
+				wordlist[i]['word'] = wordNormalized;
 			}
 			if(data == "Back")
 			{
@@ -42,7 +43,10 @@ function loadIntoStorage(datatable, columns) {
 					var translate = datatable[i][data];
 				}
 
-				wordlist[i]['translate'] = translate.normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
+				console.log("translate: " + translate);
+				var translateNormalized = translate.normalize('NFD').replace(/[\u0300-\u036f ]/g, "")
+				console.log("wordNormalized: " + translateNormalized);
+				wordlist[i]['translate'] = translateNormalized;
 			}
 			if(data == "tags")
 			{
@@ -140,6 +144,7 @@ function parseMedia(imageTable,unzip,filenames, callback2){
 	for (var prop in imageTable) {
 		if (filenames.indexOf(prop) >= 0) {
 			var sourceFilePath = unzipDir + "/" + prop;
+			imageTable[prop] = imageTable[prop].normalize('NFD').replace(/[\u0300-\u036f ]/g, "");
 			var targetFilePath = cordova.file.dataDirectory + "media/" + imageTable[prop].replace(/[^a-zA-Z0-9.]/g, "");
 			transferFile(sourceFilePath,targetFilePath, function() {
 				//waiting for files to be transfered

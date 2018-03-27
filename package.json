@@ -1,0 +1,28 @@
+{
+  "name": "lwimport",
+  "version": "1.0.5",
+  "description": "LearnWords app based on spaced repetition with 'learn mode' (LW.js)",
+  "main": ".",
+  "dependencies": {
+    "node-localstorage": "^1.3.0"
+  },
+  "devDependencies": {
+    "jasmine": "^3.1.0",
+    "jasmine-console-reporter": "^2.0.1"
+  },
+  "scripts": {
+    "test": "jasmine && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "hhtps://github.com/phil4literacy/LWimport.git"
+  },
+  "keywords": [
+    "SRS",
+    "spacedRepetion",
+    "vocabulary",
+    "literacy"
+  ],
+  "author": "",
+  "license": "MIT"
+}
